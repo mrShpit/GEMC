@@ -1,0 +1,16 @@
+C:\Users\Gleb\Desktop\GEMC\GEMC\bin\Debug\GEMC.exe.config
+C:\Users\Gleb\Desktop\GEMC\GEMC\bin\Debug\MailClientDataBase.mdf
+C:\Users\Gleb\Desktop\GEMC\GEMC\bin\Debug\MailClientDataBase_log.ldf
+C:\Users\Gleb\Desktop\GEMC\GEMC\bin\Debug\GEMC.exe
+C:\Users\Gleb\Desktop\GEMC\GEMC\bin\Debug\GEMC.pdb
+C:\Users\Gleb\Desktop\GEMC\GEMC\obj\Debug\GEMC.csprojResolveAssemblyReference.cache
+C:\Users\Gleb\Desktop\GEMC\GEMC\obj\Debug\MainWindow.baml
+C:\Users\Gleb\Desktop\GEMC\GEMC\obj\Debug\MainWindow.g.cs
+C:\Users\Gleb\Desktop\GEMC\GEMC\obj\Debug\App.g.cs
+C:\Users\Gleb\Desktop\GEMC\GEMC\obj\Debug\GEMC_Content.g.cs
+C:\Users\Gleb\Desktop\GEMC\GEMC\obj\Debug\GEMC_MarkupCompile.cache
+C:\Users\Gleb\Desktop\GEMC\GEMC\obj\Debug\GEMC.g.resources
+C:\Users\Gleb\Desktop\GEMC\GEMC\obj\Debug\GEMC.Properties.Resources.resources
+C:\Users\Gleb\Desktop\GEMC\GEMC\obj\Debug\GEMC.csproj.GenerateResource.Cache
+C:\Users\Gleb\Desktop\GEMC\GEMC\obj\Debug\GEMC.exe
+C:\Users\Gleb\Desktop\GEMC\GEMC\obj\Debug\GEMC.pdb
