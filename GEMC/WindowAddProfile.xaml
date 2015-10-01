@@ -1,0 +1,33 @@
+﻿<Window x:Class="GEMC.WindowAddProfile"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="WindowAddProfile" Height="360" Width="350">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            
+        </Grid.RowDefinitions>
+        <TextBlock Text="Введите имя профиля" HorizontalAlignment="Center"  Grid.Row="0" VerticalAlignment="Center" />
+        <TextBox Name="tbProfileName" Grid.Row="1" Width="240" Margin="3" Background="LightGoldenrodYellow"/>
+
+        <TextBlock Text="Введите адрес почтового ящика" HorizontalAlignment="Center"  Grid.Row="2" VerticalAlignment="Center" />
+        <TextBox Name="tbAdress" Grid.Row="3" Width="240" Margin="3" Background="LightGoldenrodYellow"/>
+
+        <TextBlock Text="Введите пароль почтового ящика" HorizontalAlignment="Center"  Grid.Row="4" VerticalAlignment="Center" />
+        <TextBox Name="tbPassword" Grid.Row="5" Width="240" Margin="3" Background="LightGoldenrodYellow"/>
+
+        <TextBlock Text="Выберите сервер почтового ящика" HorizontalAlignment="Center"  Grid.Row="6" VerticalAlignment="Center" />
+        <ComboBox Name="cbServer" Grid.Row="7" Width="240" Margin="3" Background="LightGoldenrodYellow"/>
+
+        <Button Name="byAccept"  Content="Создать" Grid.Row="9" Margin="2" Width="200" Click="byAccept_Click"/>
+    </Grid>
+</Window>

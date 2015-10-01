@@ -11,11 +11,11 @@ namespace GEMC
     public class Letter : DefaultDBClass
     {
 
-        private string _name;
-        public string Name 
+        private string _pid;
+        public string ProfileId
         {
-            get { return _name; }
-            set { _name = value; }
+            get { return _pid; }
+            set { _pid = value; }
         }
 
         private string _subject;
@@ -98,20 +98,21 @@ namespace GEMC
 
         public static void AddLetterToDB(Profile user, Letter letter)
         {
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\v11.0;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\MailClientDataBase.mdf;Integrated Security=True;");
+            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\v11.0;AttachDbFilename=
+                C:\Users\Gleb\Desktop\GEMC\GEMC\MailClientDataBase.mdf;Integrated Security=True;");
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = _connection;
             _connection.Open();
             StringBuilder sb = new StringBuilder();
 
-            cmd.CommandText = "insert into Mail (Id, ProfileId, Name, Subject,Body, AdressFrom, AdressTo, Category)"
-            + " values (@id, @pid, @name, @s, @b, @af, @at, @c)";
+            cmd.CommandText = "insert into Mail (Id, ProfileId, Subject,Body, AdressFrom, AdressTo, Category)"
+            + " values (@id, @pid, @s, @b, @af, @at, @c)";
 
             letter.SetId();
 
             cmd.Parameters.AddWithValue("@id", letter.Id);
             cmd.Parameters.AddWithValue("@pid", user.Id);
-            cmd.Parameters.AddWithValue("@name", letter.Name);
+
             cmd.Parameters.AddWithValue("@s", letter.Subject);
             cmd.Parameters.AddWithValue("@b", letter.Body);
             cmd.Parameters.AddWithValue("@af", letter.From);

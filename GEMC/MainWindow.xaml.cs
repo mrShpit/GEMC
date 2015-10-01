@@ -29,24 +29,49 @@ namespace GEMC
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            
-          
-
-
-            
-            
-
+            FillProfilesList();
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            PostClient ps = PostClient.Instance;
-            ps.SendLetterTest();
+          
         }
 
-        private void Button_Click_1(object sender, RoutedEventArgs e)
+        public void FillProfilesList()
         {
-            MessageBox.Show("wtf");
+            lbProfiles.ItemsSource = Profile.DB_Load();
         }
+
+        private void btnAddProfile_Click(object sender, RoutedEventArgs e)
+        {
+            WindowAddProfile WaP = new WindowAddProfile();
+            WaP.Owner = this;
+            WaP.ShowDialog();
+
+        }
+
+        private void btnDeleteProfile_Click(object sender, RoutedEventArgs e)
+        {
+            Profile.DB_Delete((Profile)lbProfiles.SelectedItem);
+            FillProfilesList();
+        }
+
+        private void btnRefreshProfile_Click(object sender, RoutedEventArgs e)
+        {
+            PostClient ps = PostClient.Instance;
+            ps.DownloadMailHistory((Profile)lbProfiles.SelectedItem);
+        }
+
+        private void btnSendEMail_Click(object sender, RoutedEventArgs e)
+        {
+            if (lbProfiles.SelectedIndex != -1)
+            {
+                WindowSendMessage WSM = new WindowSendMessage((Profile)lbProfiles.SelectedItem);
+
+                WSM.ShowDialog();
+            }
+        }
+
+
     }
 }

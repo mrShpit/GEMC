@@ -11,9 +11,9 @@ namespace GEMC
     {
         private Letter _letter = new Letter();
 
-        public override void BuildMain(string name, string subject, string body)
+        public override void BuildMain(string profileid, string subject, string body)
         {
-            _letter.Name = name;
+            _letter.ProfileId= profileid;
             _letter.Subject = subject;
             _letter.Body = body;
         }

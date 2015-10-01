@@ -10,12 +10,25 @@ namespace GEMC
 {
     public class Profile : DefaultDBClass
     {
+
+        public Profile()
+        {
+
+        }
+
+        public Profile(string name, string adr, string pas, string server)
+        {
+            Name = name;
+            Adress = adr;
+            Password = pas;
+            Server = server;
+        }
+
         private string _name;
         public string Name
         {
             get { return _name; }
             set { _name = value; }
-            
         }
 
         private string _adress;
@@ -46,11 +59,18 @@ namespace GEMC
             set { _server = value; }
         }
 
-        private int _port;
-        public int Port
+        private int _smtpport;
+        public int SmtpPort
         {
-            get { return _port; }
-            set { _port = value; }
+            get { return _smtpport; }
+            set { _smtpport = value; }
+        }
+
+        private int _popport;
+        public int PopPort
+        {
+            get { return _popport; }
+            set { _popport = value; }
         }
 
         #region -- DBmethods --
@@ -63,10 +83,9 @@ namespace GEMC
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = _connection;
             _connection.Open();
-            StringBuilder sb = new StringBuilder();
 
-            cmd.CommandText="insert into Profiles (Id, Name, Adress,Password, LastTimeChecked, Server, Port)"
-            +" values (@id, @name, @adr, @pas, @ltc, @s, @p)";
+            cmd.CommandText="insert into Profiles (Id, Name, Adress,Password, LastTimeChecked, Server, SmtpPort, PopPort)"
+            +" values (@id, @name, @adr, @pas, @ltc, @s, @smtp, @pop)";
 
             cmd.Parameters.AddWithValue("@id", user.Id);
             cmd.Parameters.AddWithValue("@name", user.Name);
@@ -74,7 +93,8 @@ namespace GEMC
             cmd.Parameters.AddWithValue("@pas", user.Password);
             cmd.Parameters.AddWithValue("@ltc", user.LastTimeChecked);
             cmd.Parameters.AddWithValue("@s", user.Server);
-            cmd.Parameters.AddWithValue("@p", user.Port);
+            cmd.Parameters.AddWithValue("@smtp", user.SmtpPort);
+            cmd.Parameters.AddWithValue("@pop", user.PopPort);
 
 
             cmd.ExecuteNonQuery();
@@ -109,7 +129,8 @@ namespace GEMC
                     user.Password = dr[3].ToString();
                     user.LastTimeChecked = Convert.ToDateTime(dr[4]);
                     user.Server = dr[5].ToString();
-                    user.Port = Convert.ToInt32(dr[6]);
+                    user.SmtpPort = Convert.ToInt32(dr[6]);
+                    user.PopPort = Convert.ToInt32(dr[7]);
 
                     ProfileList.Add(user);
                 }
@@ -134,6 +155,11 @@ namespace GEMC
         }
 
         #endregion
+
+        public override string ToString()
+        {
+            return Name;
+        }
 
     }
 }

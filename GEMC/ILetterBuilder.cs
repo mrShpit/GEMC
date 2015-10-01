@@ -11,7 +11,7 @@ namespace GEMC
 
 
 
-        public abstract void BuildMain(string name, string subject, string body);
+        public abstract void BuildMain(string profileid, string subject, string body);
         public abstract void BuildFromTo(string from, string to);
         public abstract void BuildAnother(string data);
         public abstract Letter GetResult();

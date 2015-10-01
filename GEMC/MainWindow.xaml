@@ -1,14 +1,106 @@
-﻿<Window x:Class="GEMC.MainWindow"
+﻿<Window x:Name="MainWindow1" x:Class="GEMC.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MainWindow" Height="350" Width="525" Loaded="Window_Loaded">
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="316*"/>
-            <ColumnDefinition Width="201*"/>
-        </Grid.ColumnDefinitions>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="198,86,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click"/>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="214,131,0,0" VerticalAlignment="Top" Width="75" Click="Button_Click_1"/>
+        Title="MainWindow" Height="450" Width="675" Loaded="Window_Loaded" MinWidth="650" MinHeight="400">
+    <Grid  ShowGridLines="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="55"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid ShowGridLines="True" Grid.Row="0" Background="Black">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="150"/>
+                <ColumnDefinition  Width="150"/>
+                
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+            <Button Name="btnAddProfile" Content="Новый профиль" Grid.Column="0"  Height="30" Margin="5" Click="btnAddProfile_Click"/>
+            <Button Name="btnSendEMail" Content="Отправить письмо" Grid.Column="1"  Height="30" Margin="5" Click="btnSendEMail_Click"/>
+        </Grid>
+        
+        
+        <Grid ShowGridLines="True" Grid.Row="1" Background="Black">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="300"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+           
+            <Grid Grid.Column="0" Background="DarkRed" >
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="40"/>
+                </Grid.RowDefinitions>
+                <ListBox Name="lbProfiles" Grid.Row="0" Margin="5">
 
-    </Grid>
+                    <ListBox.ItemContainerStyle>
+                        <Style TargetType="{x:Type ListBoxItem}">
+                            <Setter Property="Margin" Value="1"/>
+                            <Setter Property="Height" Value="30" />
+
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+
+                                        <Border x:Name="brd" Background="{TemplateBinding Background}" 
+                                         BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}">
+                                            <DockPanel Margin="3">
+                                                
+                                                <Border DockPanel.Dock="Left" Margin="8,0,0,0">
+                                                    <TextBlock FontSize="14" Text="{Binding Name}" VerticalAlignment="Center"/>
+                                                </Border>
+
+                                                <Border DockPanel.Dock="Right" Margin="1,0,0,0" >
+                                                    <TextBlock FontSize="13"  Text="{Binding Adress, Mode=TwoWay}" VerticalAlignment="Center" />
+                                                </Border>
+                                                
+                                                <Border/>
+                                            </DockPanel>
+                                        </Border>
+
+                                        <ControlTemplate.Triggers>
+
+                                            <Trigger Property="IsSelected" Value="True">
+                                                <Setter Property="Background" Value="#FF7E42FF"/>
+                                                <Setter Property="Foreground" Value="Black"/>
+                                                <Setter Property="BorderThickness" Value="1"/>
+                                                <Setter Property="BorderBrush" Value="Black"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+
+
+
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                            
+                            
+                            
+                        </Style>
+                    </ListBox.ItemContainerStyle>
+                </ListBox>
+
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions >
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+                    <Button Name="btnRefreshProfile" Content="Обновить ящик" Grid.Column="0" Margin="5" Click="btnRefreshProfile_Click"/>
+                    <Button Name="btnDeleteProfile"  Content="Удалить профиль" Grid.Column="1" Margin="5" Click="btnDeleteProfile_Click"/>
+                </Grid>
+            </Grid>
+            <Grid Grid.Column="1" Background="DarkRed" >
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition Height="40"/>
+                </Grid.RowDefinitions>
+                <ListBox Name="lbMailBox" Grid.Row="0" Margin="5"/>
+            </Grid>
+
+
+            </Grid>
+
+
+
+
+    </Grid> 
 </Window>

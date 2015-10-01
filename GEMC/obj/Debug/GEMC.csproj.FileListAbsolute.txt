@@ -14,3 +14,7 @@ C:\Users\Gleb\Desktop\GEMC\GEMC\obj\Debug\GEMC.Properties.Resources.resources
 C:\Users\Gleb\Desktop\GEMC\GEMC\obj\Debug\GEMC.csproj.GenerateResource.Cache
 C:\Users\Gleb\Desktop\GEMC\GEMC\obj\Debug\GEMC.exe
 C:\Users\Gleb\Desktop\GEMC\GEMC\obj\Debug\GEMC.pdb
+C:\Users\Gleb\Desktop\GEMC\GEMC\obj\Debug\WindowAddProfile.baml
+C:\Users\Gleb\Desktop\GEMC\GEMC\obj\Debug\WindowAddProfile.g.cs
+C:\Users\Gleb\Desktop\GEMC\GEMC\obj\Debug\WindowSendMessage.baml
+C:\Users\Gleb\Desktop\GEMC\GEMC\obj\Debug\WindowSendMessage.g.cs
