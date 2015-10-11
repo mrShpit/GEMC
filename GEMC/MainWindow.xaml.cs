@@ -30,12 +30,11 @@ namespace GEMC
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             FillProfilesList();
+            cbCategory.Items.Add("Отправленные");
+            cbCategory.Items.Add("Принятые");
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-          
-        }
+
 
         public void FillProfilesList()
         {
@@ -47,7 +46,6 @@ namespace GEMC
             WindowAddProfile WaP = new WindowAddProfile();
             WaP.Owner = this;
             WaP.ShowDialog();
-
         }
 
         private void btnDeleteProfile_Click(object sender, RoutedEventArgs e)
@@ -58,8 +56,11 @@ namespace GEMC
 
         private void btnRefreshProfile_Click(object sender, RoutedEventArgs e)
         {
-            PostClient ps = PostClient.Instance;
-            ps.DownloadMailHistory((Profile)lbProfiles.SelectedItem);
+            if (lbProfiles.SelectedIndex != -1)
+            {
+                PostClient ps = PostClient.Instance;
+                ps.DownloadMailHistory((Profile)lbProfiles.SelectedItem);
+            }
         }
 
         private void btnSendEMail_Click(object sender, RoutedEventArgs e)
@@ -73,5 +74,43 @@ namespace GEMC
         }
 
 
+        private void lbProfiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (cbCategory.SelectedIndex == -1)
+            {
+                cbCategory.SelectedIndex = 1;
+            }
+            else
+            {
+                int n = cbCategory.SelectedIndex;
+                cbCategory.SelectedIndex = -1;
+                cbCategory.SelectedIndex = n;
+            }
+        }
+
+
+        private void lbMailBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (lbMailBox.SelectedIndex != -1)
+            {
+                Letter letter = ((ProxyLetter)lbMailBox.SelectedItem).GetLetter();
+                MessageBox.Show(letter.Body);
+                lbMailBox.SelectedIndex = -1;
+            }
+
+        }
+
+        private void cbCategory_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+           
+            if(cbCategory.SelectedIndex==0)
+            {
+                lbMailBox.ItemsSource = ProxyLetter.GetSended((Profile)lbProfiles.SelectedItem);
+            }
+            if(cbCategory.SelectedIndex==1)
+            {
+                lbMailBox.ItemsSource = ProxyLetter.GetRecieved((Profile)lbProfiles.SelectedItem);
+            }
+        }
     }
 }

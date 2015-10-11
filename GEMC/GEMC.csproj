@@ -68,6 +68,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="ProxyLetter.cs" />
     <Compile Include="WindowAddProfile.xaml.cs">
       <DependentUpon>WindowAddProfile.xaml</DependentUpon>
     </Compile>

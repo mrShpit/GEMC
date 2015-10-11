@@ -79,7 +79,7 @@ namespace GEMC
             List<Letter> mail = new List<Letter>();
 
             TcpClient tcpclient = new TcpClient(); // create an instance of TcpClient
-            tcpclient.Connect("pop." + user.Server, user.PopPort); // HOST NAME POP SERVER and gmail uses port number 995 for POP 
+            tcpclient.Connect("pop." + user.Server, user.PopPort); // gmail uses port number 995 for POP 
             System.Net.Security.SslStream sslstream = new SslStream(tcpclient.GetStream()); // This is Secure Stream // opened the connection between client and POP Server
             sslstream.AuthenticateAsClient("pop." + user.Server); // authenticate as client 
             System.IO.StreamWriter sw = new StreamWriter(sslstream); // Asssigned the writer to stream
@@ -89,7 +89,7 @@ namespace GEMC
             sw.WriteLine("PASS " + user.Password);
             sw.Flush();
 
-            sw.WriteLine("RETR 16");
+            sw.WriteLine("LIST");
             sw.Flush();
 
             string strTemp = string.Empty;

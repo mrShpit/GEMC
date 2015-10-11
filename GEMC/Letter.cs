@@ -53,47 +53,42 @@ namespace GEMC
             set { _category = value; }
         }
 
+        private DateTime _sendingTime;
+        public DateTime SendingTime
+        {
+            get { return _sendingTime; }
+            set { _sendingTime = value; }
+        }
+
         public Letter()
         {
 
         }
 
-        public static List<Letter> PullMailFromDB(Profile user)
+        public Letter(string profileid, string subject, string body, string from, string to,string category, DateTime time)
         {
-
-            List<Letter> mail = new List<Letter>();
-
-            LetterBuilderStandart letBuilder = new LetterBuilderStandart();
-            LetterBuildingDirector letDirector = new LetterBuildingDirector(letBuilder);
-
-
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\v11.0;
-                AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\MailClientDataBase.mdf;Integrated Security=True;");
-
-            SqlCommand cmd = new SqlCommand();
-            SqlDataReader dr;
-
-            cmd.Connection = _connection;
-            _connection.Open();
-
-            cmd.CommandText = "select * from Mail where ProfileId='" + user.Id + "'";
-
-            dr = cmd.ExecuteReader();
-            if (dr.HasRows)
-            {
-                while (dr.Read())
-                {
-                    letDirector.ConstructFromDataReader(dr);
-                    Letter letter = letBuilder.GetResult();
-
-                    mail.Add(letter);
-                }
-            }
-
-            _connection.Close();
-
-            return mail;
+            this.ProfileId = profileid;
+            this.Subject = subject;
+            this.Body = body;
+            this.From = from;
+            this.To = to;
+            this.Category = category;
+            this.SendingTime = time;
         }
+
+        public Letter(SqlDataReader dr)
+        {
+            this.ProfileId = dr[1].ToString();
+            this.Subject = dr[2].ToString();
+            this.Body = dr[3].ToString();
+            this.From = dr[4].ToString();
+            this.To = dr[5].ToString();
+            this.Category = dr[6].ToString();
+            this.SendingTime = Convert.ToDateTime(dr[7]); 
+        }
+
+
+
          
 
         public static void AddLetterToDB(Profile user, Letter letter)
@@ -105,8 +100,8 @@ namespace GEMC
             _connection.Open();
             StringBuilder sb = new StringBuilder();
 
-            cmd.CommandText = "insert into Mail (Id, ProfileId, Subject,Body, AdressFrom, AdressTo, Category)"
-            + " values (@id, @pid, @s, @b, @af, @at, @c)";
+            cmd.CommandText = "insert into Mail (Id, ProfileId, Subject,Body, AdressFrom, AdressTo, Category, Time)"
+            + " values (@id, @pid, @s, @b, @af, @at, @c, @t)";
 
             letter.SetId();
 
@@ -118,11 +113,12 @@ namespace GEMC
             cmd.Parameters.AddWithValue("@af", letter.From);
             cmd.Parameters.AddWithValue("@at", letter.To);
             cmd.Parameters.AddWithValue("@c", letter.Category);
+            cmd.Parameters.AddWithValue("@t", letter.SendingTime);
 
             cmd.ExecuteNonQuery();
             _connection.Close();
 
-            MessageBox.Show("Added");
+            MessageBox.Show("Sended and added to db");
 
         }
 

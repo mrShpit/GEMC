@@ -29,11 +29,11 @@ namespace GEMC
 
         private void byAccept_Click(object sender, RoutedEventArgs e)
         {
-            if( tbAdress.Text!= "" && tbPassword.Text!= "" && tbProfileName.Text!= "" && cbServer.Text!="")
+            if( tbAdress.Text!= "" && tbPassword.Password!= "" && tbProfileName.Text!= "" && cbServer.Text!="")
             {
                 MainWindow main = this.Owner as MainWindow;
 
-                Profile NewUser = new Profile(tbProfileName.Text, tbAdress.Text, tbPassword.Text, cbServer.Text);
+                Profile NewUser = new Profile(tbProfileName.Text, tbAdress.Text, tbPassword.Password, cbServer.Text);
                 if(cbServer.Text=="mail.ru")
                 {
                     NewUser.SmtpPort = 25;

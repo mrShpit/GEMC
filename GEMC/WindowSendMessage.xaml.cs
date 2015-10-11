@@ -35,12 +35,13 @@ namespace GEMC
                 LetterBuilderStandart letBuilder = new LetterBuilderStandart();
                 LetterBuildingDirector letDirector = new LetterBuildingDirector(letBuilder);
 
-                letDirector.ConstructDefault(Sender.Id, tbSubject.Text, tbMessage.Text, Sender.Adress, tbAdress.Text, "Default");
-                Letter letter = letBuilder.GetResult();
+                Letter letter = new Letter(Sender.Id, tbSubject.Text, tbMessage.Text, Sender.Adress, tbAdress.Text, "Default", DateTime.Now);
                 letter.SetId();
 
                 PostClient PC = PostClient.Instance;
                 PC.SendLetterSMTP(Sender, letter);
+
+                Letter.AddLetterToDB(Sender,letter);
             }
 
         }
