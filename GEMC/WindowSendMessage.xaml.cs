@@ -32,8 +32,6 @@ namespace GEMC
         {
             if (tbAdress.Text != "" && tbMessage.Text != "" && tbSubject.Text != "")
             {
-                LetterBuilderStandart letBuilder = new LetterBuilderStandart();
-                LetterBuildingDirector letDirector = new LetterBuildingDirector(letBuilder);
 
                 Letter letter = new Letter(Sender.Id, tbSubject.Text, tbMessage.Text, Sender.Adress, tbAdress.Text, "Default", DateTime.Now);
                 letter.SetId();

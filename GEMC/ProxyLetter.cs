@@ -57,6 +57,19 @@ namespace GEMC
             }
         }
 
+        private DateTime sendtime;
+        public DateTime SendTime
+        {
+            get
+            {
+                return sendtime;
+            }
+            set
+            {
+                sendtime = value;
+            }
+        }
+
         public Letter GetLetter()
         {
             Letter letter = new Letter();
@@ -108,6 +121,7 @@ namespace GEMC
                 {
                     ProxyLetter proxy = new ProxyLetter(dr[0].ToString(), dr[2].ToString());
                     proxy.Interlocutor = dr[4].ToString();
+                    proxy.SendTime = Convert.ToDateTime(dr[7]);
                     proxies.Add(proxy);
                 }
             }
@@ -147,5 +161,7 @@ namespace GEMC
             _connection.Close();
             return proxies;
         }
+
+
     }
 }

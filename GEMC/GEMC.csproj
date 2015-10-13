@@ -68,7 +68,11 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="FillRecieved.cs" />
+    <Compile Include="FillSended.cs" />
+    <Compile Include="BuildStrategy.cs" />
     <Compile Include="ProxyLetter.cs" />
+    <Compile Include="ProxyList.cs" />
     <Compile Include="WindowAddProfile.xaml.cs">
       <DependentUpon>WindowAddProfile.xaml</DependentUpon>
     </Compile>
@@ -85,9 +89,6 @@
     </Compile>
     <Compile Include="DefaultDBClass.cs" />
     <Compile Include="Letter.cs" />
-    <Compile Include="ILetterBuilder.cs" />
-    <Compile Include="LetterBuilderStandart.cs" />
-    <Compile Include="LetterBuildingDirector.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>

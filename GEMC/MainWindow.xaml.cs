@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Data.SqlClient;
-
+using System.Net.Mail;
 
 namespace GEMC
 {
@@ -71,6 +71,7 @@ namespace GEMC
 
                 WSM.ShowDialog();
             }
+            
         }
 
 
