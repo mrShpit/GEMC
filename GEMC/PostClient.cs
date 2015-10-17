@@ -67,8 +67,110 @@ namespace GEMC
         public List<Letter> CheckForNewLetters(Profile user)
         {
             List<Letter> NewMail = new List<Letter>();
-            //
-            //
+            DateTime lastCheck = user.LastTimeChecked;
+
+            TcpClient tcpclient = new TcpClient(); 
+            tcpclient.Connect("pop." + user.Server, user.PopPort); 
+            System.Net.Security.SslStream sslstream = new SslStream(tcpclient.GetStream());
+            sslstream.AuthenticateAsClient("pop." + user.Server); 
+            System.IO.StreamWriter sw = new StreamWriter(sslstream); 
+            System.IO.StreamReader reader = new StreamReader(sslstream);
+           
+            sw.WriteLine("USER " + user.Adress); 
+            sw.Flush();
+            sw.WriteLine("PASS " + user.Password);
+            sw.Flush();
+            sw.WriteLine("LIST");
+            sw.Flush();
+
+            
+
+            int Counter = 0;
+            string strTemp = string.Empty;
+            string MessageNum = "";
+            while ((strTemp = reader.ReadLine()) != null)
+            {
+                if (Counter == 3)
+                {
+                    MessageNum = strTemp;
+                    break;
+                }
+                Counter++;
+            }
+            sw.WriteLine("Quit ");
+            sw.Flush();
+            MessageNum = MessageNum.Split(' ')[1];
+            MessageBox.Show(MessageNum);
+            int MesNum = Convert.ToInt32(MessageNum);
+
+
+
+            tcpclient = new TcpClient();
+            tcpclient.Connect("pop." + user.Server, user.PopPort);
+            sslstream = new SslStream(tcpclient.GetStream());
+            sslstream.AuthenticateAsClient("pop." + user.Server);
+            sw = new StreamWriter(sslstream);
+            reader = new StreamReader(sslstream);
+            sw.WriteLine("USER " + user.Adress);
+            sw.Flush();
+            sw.WriteLine("PASS " + user.Password);
+            sw.Flush();
+
+            
+
+            strTemp = string.Empty;
+            string str = string.Empty;
+            bool Done = false;
+
+            int Cntr = 0;
+           
+            while(!Done)
+            {
+                str = "";
+
+                sw.WriteLine("RETR " + MesNum.ToString());
+                //sw.WriteLine("RETR 465");
+                sw.Flush();
+
+
+                while ((strTemp = reader.ReadLine()) != null)
+                {
+                    if (strTemp == ".")
+                    {
+                        break;
+                    }
+
+                    if (strTemp.IndexOf("-ERR") != -1)
+                    {
+                        break;
+                    }
+                    str += strTemp + "\n";
+                }
+                
+                TestWindow t = new TestWindow(str);
+                t.Show();
+
+                MesNum--;
+                
+
+
+                // Нужен конструктор для сборки письма из поп-кода
+
+                //if(letter.SendingTime<user.LastTimeChecked)
+                //if(Cntr==1)
+                    Done = true;
+
+               Cntr++;
+
+            }
+            sw.WriteLine("Quit ");
+            sw.Flush();
+            
+
+
+
+            user.LastTimeChecked = DateTime.Now;
+            Profile.DB_Update(user);
             return NewMail;
         }
 
@@ -111,6 +213,10 @@ namespace GEMC
             }
 
             MessageBox.Show(str);
+
+
+
+
             sw.WriteLine("Quit ");
             sw.Flush();
 
@@ -118,7 +224,7 @@ namespace GEMC
         }
 
 
-
+        
 
     }
 }

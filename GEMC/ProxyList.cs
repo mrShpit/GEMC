@@ -24,6 +24,10 @@ namespace GEMC
         {
             _buildstrategy.Sort(_list);
         }
+        public List<ProxyLetter> ReturnList()
+        {
+            return _list;
+        }
        
     }
 }

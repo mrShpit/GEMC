@@ -141,6 +141,19 @@ namespace GEMC
             return ProfileList;
         }
 
+        public static void DB_Update(Profile user)
+        {
+            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\v11.0;
+                AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\MailClientDataBase.mdf;Integrated Security=True;");
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = _connection;
+            _connection.Open();
+
+            cmd.CommandText = @"Update Profiles SET LastTimeChecked = (@UE) where Id='" + user.Id + "'";
+            cmd.Parameters.AddWithValue("@UE", user.LastTimeChecked);
+            cmd.ExecuteNonQuery();
+            _connection.Close();
+        }
 
         public static void DB_Delete(Profile user)
         {

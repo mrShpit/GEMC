@@ -14,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Data.SqlClient;
 using System.Net.Mail;
+using System.IO;
 
 namespace GEMC
 {
@@ -32,6 +33,8 @@ namespace GEMC
             FillProfilesList();
             cbCategory.Items.Add("Отправленные");
             cbCategory.Items.Add("Принятые");
+            
+            
         }
 
 
@@ -56,10 +59,13 @@ namespace GEMC
 
         private void btnRefreshProfile_Click(object sender, RoutedEventArgs e)
         {
+            string strin = File.ReadAllText(@"D:\WriteLinesX.txt", Encoding.GetEncoding(1251));
+            DecodeFrom64(strin);
             if (lbProfiles.SelectedIndex != -1)
             {
                 PostClient ps = PostClient.Instance;
-                ps.DownloadMailHistory((Profile)lbProfiles.SelectedItem);
+                ps.CheckForNewLetters((Profile)lbProfiles.SelectedItem);
+               
             }
         }
 
@@ -71,7 +77,6 @@ namespace GEMC
 
                 WSM.ShowDialog();
             }
-            
         }
 
 
@@ -103,15 +108,30 @@ namespace GEMC
 
         private void cbCategory_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-           
+            ProxyList letterProxies = new ProxyList();
             if(cbCategory.SelectedIndex==0)
             {
-                lbMailBox.ItemsSource = ProxyLetter.GetSended((Profile)lbProfiles.SelectedItem);
+                letterProxies.SetFillStrategy(new FillSended());
+                letterProxies.Fill((Profile)lbProfiles.SelectedItem);
+                lbMailBox.ItemsSource = letterProxies.ReturnList();
+                //lbMailBox.ItemsSource = ProxyLetter.GetSended((Profile)lbProfiles.SelectedItem);
             }
             if(cbCategory.SelectedIndex==1)
             {
-                lbMailBox.ItemsSource = ProxyLetter.GetRecieved((Profile)lbProfiles.SelectedItem);
+                letterProxies.SetFillStrategy(new FillRecieved());
+                letterProxies.Fill((Profile)lbProfiles.SelectedItem);
+                lbMailBox.ItemsSource = letterProxies.ReturnList();
+                //lbMailBox.ItemsSource = ProxyLetter.GetRecieved((Profile)lbProfiles.SelectedItem);
             }
+        }
+
+        public void DecodeFrom64(string encodedData)
+        {
+            byte[] encodedDataAsBytes
+            = System.Convert.FromBase64String(encodedData);
+            string returnValue =
+            System.Text.Encoding.UTF8.GetString(encodedDataAsBytes);
+            MessageBox.Show(returnValue);
         }
     }
 }
