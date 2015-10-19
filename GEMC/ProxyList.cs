@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GEMC
+﻿namespace GEMC
 {
-    class ProxyList
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+
+    public class ProxyList
     {
         private List<ProxyLetter> _list = new List<ProxyLetter>();
         private BuildListStrategy _buildstrategy;
@@ -18,16 +18,17 @@ namespace GEMC
 
         public void Fill(Profile user)
         {
-            _buildstrategy.Fill(_list, user);
+            this._buildstrategy.Fill(this._list, user);
         }
+
         public void Sort()
         {
-            _buildstrategy.Sort(_list);
+            this._buildstrategy.Sort(this._list);
         }
+
         public List<ProxyLetter> ReturnList()
         {
-            return _list;
+            return this._list;
         }
-       
     }
 }

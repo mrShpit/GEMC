@@ -1,74 +1,65 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Web;
-using System.Net;
-using System.Net.Mail;
-using System.Net.Mime;
-using System.IO;
-using System.Net.NetworkInformation;
-using System.Net.Security;
-using System.Net.Sockets;
-
-namespace GEMC
+﻿namespace GEMC
 {
+    using System;
+    using System.Collections.Generic;
+    using System.IO;
+    using System.Linq;
+    using System.Net;
+    using System.Net.Mail;
+    using System.Net.Mime;
+    using System.Net.NetworkInformation;
+    using System.Net.Security;
+    using System.Net.Sockets;
+    using System.Text;
+    using System.Threading.Tasks;
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Data;
+    using System.Windows.Documents;
+    using System.Windows.Input;
+    using System.Windows.Media;
+    using System.Windows.Media.Imaging;
+    using System.Windows.Navigation;
+    using System.Windows.Shapes;
+    using System.Web;
+
     public sealed class PostClient
-        
     {
+        public static readonly PostClient Instance = new PostClient();
 
-        static readonly PostClient _instance = new PostClient();
-
-        PostClient()
+        public PostClient()
         {
-
         }
 
-        public static PostClient Instance
+        public static PostClient instance
         {
             get
             {
-                return _instance;
+                return Instance;
             }
         }
 
         public void SendLetterSMTP(Profile sender, Letter letter)
         {
-
-            //SmtpClient Smtp = new SmtpClient("smtp.mail.ru", 25);
-            //SmtpClient Smtp = new SmtpClient("smtp.yandex.ru", 25);
-            //SmtpClient Smtp = new SmtpClient("smtp.gmail.com", 587);
-
-
-            SmtpClient Smtp = new SmtpClient("smtp." + sender.Server, sender.SmtpPort); //Сервер и порт
-            Smtp.Credentials = new System.Net.NetworkCredential(sender.Adress, sender.Password);  //Логин и пароль
-            //Формирование письма
-            MailMessage Message = new MailMessage();
-            Message.From = new MailAddress(sender.Adress);
-            Message.To.Add(new MailAddress(letter.To));
-            Message.Subject = letter.Subject;
-            Message.Body = letter.Body;
-            Smtp.EnableSsl = true;
-            //Отправка
-            Smtp.Send(Message);
+            // SmtpClient Smtp = new SmtpClient("smtp.mail.ru", 25);
+            // SmtpClient Smtp = new SmtpClient("smtp.yandex.ru", 25);
+            // SmtpClient Smtp = new SmtpClient("smtp.gmail.com", 587);
+            SmtpClient smtp = new SmtpClient("smtp." + sender.Server, sender.SmtpPort); // Сервер и порт
+            smtp.Credentials = new System.Net.NetworkCredential(sender.Adress, sender.Password);  // Логин и пароль
+            ////Формирование письма
+            MailMessage message = new MailMessage();
+            message.From = new MailAddress(sender.Adress);
+            message.To.Add(new MailAddress(letter.To));
+            message.Subject = letter.Subject;
+            message.Body = letter.Body;
+            smtp.EnableSsl = true;
+            smtp.Send(message); // Отправка
         }
-
 
         public List<Letter> CheckForNewLetters(Profile user)
         {
-            List<Letter> NewMail = new List<Letter>();
+            List<Letter> newMail = new List<Letter>();
             DateTime lastCheck = user.LastTimeChecked;
-
             TcpClient tcpclient = new TcpClient(); 
             tcpclient.Connect("pop." + user.Server, user.PopPort); 
             System.Net.Security.SslStream sslstream = new SslStream(tcpclient.GetStream());
@@ -81,30 +72,26 @@ namespace GEMC
             sw.WriteLine("PASS " + user.Password);
             sw.Flush();
             sw.WriteLine("LIST");
-            sw.Flush();
-
-            
-
-            int Counter = 0;
+            sw.Flush();            
+            int counter = 0;
             string strTemp = string.Empty;
-            string MessageNum = "";
+            string messageNum = string.Empty;
             while ((strTemp = reader.ReadLine()) != null)
             {
-                if (Counter == 3)
+                if (counter == 3)
                 {
-                    MessageNum = strTemp;
+                    messageNum = strTemp;
                     break;
                 }
-                Counter++;
+
+                counter++;
             }
+
             sw.WriteLine("Quit ");
             sw.Flush();
-            MessageNum = MessageNum.Split(' ')[1];
-            MessageBox.Show(MessageNum);
-            int MesNum = Convert.ToInt32(MessageNum);
-
-
-
+            messageNum = messageNum.Split(' ')[1];
+            MessageBox.Show(messageNum);
+            int mesNum = Convert.ToInt32(messageNum);
             tcpclient = new TcpClient();
             tcpclient.Connect("pop." + user.Server, user.PopPort);
             sslstream = new SslStream(tcpclient.GetStream());
@@ -115,24 +102,16 @@ namespace GEMC
             sw.Flush();
             sw.WriteLine("PASS " + user.Password);
             sw.Flush();
-
-            
-
             strTemp = string.Empty;
             string str = string.Empty;
-            bool Done = false;
-
-            int Cntr = 0;
-           
-            while(!Done)
+            bool done = false;
+            int cntr = 0;       
+            while (!done)
             {
-                str = "";
+                str = string.Empty;
 
-                sw.WriteLine("RETR " + MesNum.ToString());
-                //sw.WriteLine("RETR 465");
+                sw.WriteLine("RETR " + mesNum.ToString());
                 sw.Flush();
-
-
                 while ((strTemp = reader.ReadLine()) != null)
                 {
                     if (strTemp == ".")
@@ -144,43 +123,34 @@ namespace GEMC
                     {
                         break;
                     }
+
                     str += strTemp + "\n";
                 }
                 
                 TestWindow t = new TestWindow(str);
                 t.Show();
 
-                MesNum--;
-                
-
+                mesNum--;        
 
                 // Нужен конструктор для сборки письма из поп-кода
-
-                //if(letter.SendingTime<user.LastTimeChecked)
-                //if(Cntr==1)
-                    Done = true;
-
-               Cntr++;
-
+                // if(letter.SendingTime<user.LastTimeChecked)
+                // if(Cntr==1)
+                    done = true;
+               cntr++;
             }
+
             sw.WriteLine("Quit ");
             sw.Flush();
-            
-
-
-
             user.LastTimeChecked = DateTime.Now;
             Profile.DB_Update(user);
-            return NewMail;
+            return newMail;
         }
-
 
         public List<Letter> DownloadMailHistory(Profile user)
         {
-
             List<Letter> mail = new List<Letter>();
 
-            TcpClient tcpclient = new TcpClient(); // create an instance of TcpClient
+            TcpClient tcpclient = new TcpClient(); 
             tcpclient.Connect("pop." + user.Server, user.PopPort); // gmail uses port number 995 for POP 
             System.Net.Security.SslStream sslstream = new SslStream(tcpclient.GetStream()); // This is Secure Stream // opened the connection between client and POP Server
             sslstream.AuthenticateAsClient("pop." + user.Server); // authenticate as client 
@@ -190,14 +160,10 @@ namespace GEMC
             sw.Flush();
             sw.WriteLine("PASS " + user.Password);
             sw.Flush();
-
             sw.WriteLine("LIST");
             sw.Flush();
-
             string strTemp = string.Empty;
-            string str = "";
-
- 
+            string str = string.Empty;
             while ((strTemp = reader.ReadLine()) != null)
             {
                 if (strTemp == ".")
@@ -209,22 +175,14 @@ namespace GEMC
                 {
                     break;
                 }
+
                 str += strTemp + "\n";
             }
 
             MessageBox.Show(str);
-
-
-
-
             sw.WriteLine("Quit ");
             sw.Flush();
-
             return mail;
         }
-
-
-        
-
     }
 }

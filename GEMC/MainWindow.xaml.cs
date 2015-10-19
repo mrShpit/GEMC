@@ -1,23 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Data.SqlClient;
-using System.Net.Mail;
-using System.IO;
-
-namespace GEMC
+﻿namespace GEMC
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Data.SqlClient;
+    using System.IO;
+    using System.Linq;
+    using System.Net.Mail;
+    using System.Text;
+    using System.Threading.Tasks;
+    using System.Windows;
+    using System.Windows.Controls;
+    using System.Windows.Data;
+    using System.Windows.Documents;
+    using System.Windows.Input;
+    using System.Windows.Media;
+    using System.Windows.Media.Imaging;
+    using System.Windows.Navigation;
+    using System.Windows.Shapes;
+    
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
@@ -25,19 +25,15 @@ namespace GEMC
     {
         public MainWindow()
         {
-            InitializeComponent();
+            this.InitializeComponent();
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        public void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            FillProfilesList();
+            this.FillProfilesList();
             cbCategory.Items.Add("Отправленные");
-            cbCategory.Items.Add("Принятые");
-            
-            
+            cbCategory.Items.Add("Принятые"); 
         }
-
-
 
         public void FillProfilesList()
         {
@@ -46,26 +42,25 @@ namespace GEMC
 
         private void btnAddProfile_Click(object sender, RoutedEventArgs e)
         {
-            WindowAddProfile WaP = new WindowAddProfile();
-            WaP.Owner = this;
-            WaP.ShowDialog();
+            WindowAddProfile waP = new WindowAddProfile();
+            waP.Owner = this;
+            waP.ShowDialog();
         }
 
         private void btnDeleteProfile_Click(object sender, RoutedEventArgs e)
         {
             Profile.DB_Delete((Profile)lbProfiles.SelectedItem);
-            FillProfilesList();
+            this.FillProfilesList();
         }
 
         private void btnRefreshProfile_Click(object sender, RoutedEventArgs e)
         {
             string strin = File.ReadAllText(@"D:\WriteLinesX.txt", Encoding.GetEncoding(1251));
-            DecodeFrom64(strin);
+            this.DecodeFrom64(strin);
             if (lbProfiles.SelectedIndex != -1)
             {
-                PostClient ps = PostClient.Instance;
+                PostClient ps = PostClient.instance;
                 ps.CheckForNewLetters((Profile)lbProfiles.SelectedItem);
-               
             }
         }
 
@@ -73,12 +68,10 @@ namespace GEMC
         {
             if (lbProfiles.SelectedIndex != -1)
             {
-                WindowSendMessage WSM = new WindowSendMessage((Profile)lbProfiles.SelectedItem);
-
-                WSM.ShowDialog();
+                WindowSendMessage wsm = new WindowSendMessage((Profile)lbProfiles.SelectedItem);
+                wsm.ShowDialog();
             }
         }
-
 
         private void lbProfiles_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -94,7 +87,6 @@ namespace GEMC
             }
         }
 
-
         private void lbMailBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (lbMailBox.SelectedIndex != -1)
@@ -103,29 +95,31 @@ namespace GEMC
                 MessageBox.Show(letter.Body);
                 lbMailBox.SelectedIndex = -1;
             }
-
         }
 
         private void cbCategory_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ProxyList letterProxies = new ProxyList();
-            if(cbCategory.SelectedIndex==0)
+            if (cbCategory.SelectedIndex == 0)
             {
                 letterProxies.SetFillStrategy(new FillSended());
                 letterProxies.Fill((Profile)lbProfiles.SelectedItem);
                 lbMailBox.ItemsSource = letterProxies.ReturnList();
-                //lbMailBox.ItemsSource = ProxyLetter.GetSended((Profile)lbProfiles.SelectedItem);
+
+                // lbMailBox.ItemsSource = ProxyLetter.GetSended((Profile)lbProfiles.SelectedItem);
             }
-            if(cbCategory.SelectedIndex==1)
+
+            if (cbCategory.SelectedIndex == 1)
             {
                 letterProxies.SetFillStrategy(new FillRecieved());
                 letterProxies.Fill((Profile)lbProfiles.SelectedItem);
                 lbMailBox.ItemsSource = letterProxies.ReturnList();
-                //lbMailBox.ItemsSource = ProxyLetter.GetRecieved((Profile)lbProfiles.SelectedItem);
+
+                // lbMailBox.ItemsSource = ProxyLetter.GetRecieved((Profile)lbProfiles.SelectedItem);
             }
         }
 
-        public void DecodeFrom64(string encodedData)
+        private void DecodeFrom64(string encodedData)
         {
             byte[] encodedDataAsBytes
             = System.Convert.FromBase64String(encodedData);

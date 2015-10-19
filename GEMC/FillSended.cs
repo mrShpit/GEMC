@@ -1,24 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data.SqlClient;
-
-
-namespace GEMC
+﻿namespace GEMC
 {
-    class FillSended : BuildListStrategy
+    using System;
+    using System.Collections.Generic;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+
+    public class FillSended : BuildListStrategy
     {
         public override void Fill(List<ProxyLetter> list, Profile user)
         {
-           
             SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\v11.0;
                 AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\MailClientDataBase.mdf;Integrated Security=True;");
 
             SqlCommand cmd = new SqlCommand();
             SqlDataReader dr;
-
             cmd.Connection = _connection;
             _connection.Open();
 
@@ -56,7 +53,5 @@ namespace GEMC
                 }
             }
         }
-
-
     }
 }

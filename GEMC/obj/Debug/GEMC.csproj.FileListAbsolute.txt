@@ -20,5 +20,3 @@ C:\Users\Gleb\Desktop\GEMC\GEMC\obj\Debug\WindowSendMessage.baml
 C:\Users\Gleb\Desktop\GEMC\GEMC\obj\Debug\WindowSendMessage.g.cs
 C:\Users\Gleb\Desktop\GEMC\GEMC\obj\Debug\TestWindow.baml
 C:\Users\Gleb\Desktop\GEMC\GEMC\obj\Debug\TestWindow.g.cs
-C:\Users\Gleb\Desktop\GEMC\GEMC\bin\Debug\StyleCop.CSharp.dll
-C:\Users\Gleb\Desktop\GEMC\GEMC\bin\Debug\StyleCop.dll

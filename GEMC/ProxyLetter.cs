@@ -1,34 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Data.SqlClient;
-using System.Windows;
-
-namespace GEMC
+﻿namespace GEMC
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Data.SqlClient;
+    using System.Linq;
+    using System.Text;
+    using System.Threading.Tasks;
+    using System.Windows;
+
     public class ProxyLetter
     {
-
         public ProxyLetter(string id, string subject)
         {
-            Id = id;
-            Subject = subject;
+            this.Id = id;
+            this.Subject = subject;
         }
-
 
         private Letter letter = new Letter();
 
         public string Id
         {
             get 
-            { 
-                return letter.Id; 
+            {
+                return this.letter.Id; 
             }
+
             set
             {
-                letter.Id = value;
+                this.letter.Id = value;
             }
         }
 
@@ -36,67 +35,43 @@ namespace GEMC
         {
             get
             {
-                return letter.Subject;
+                return this.letter.Subject;
             }
+
             set
             {
-                letter.Subject = value;
+                this.letter.Subject = value;
             }
         }
 
         private string interlocutor;
+
         public string Interlocutor
         {
             get
             {
-                return interlocutor;
+                return this.interlocutor;
             }
+
             set
             {
-                interlocutor = value;
+                this.interlocutor = value;
             }
         }
 
         private DateTime sendtime;
+
         public DateTime SendTime
         {
             get
             {
-                return sendtime;
+                return this.sendtime;
             }
+
             set
             {
-                sendtime = value;
+                this.sendtime = value;
             }
-        }
-
-        public Letter GetLetter()
-        {
-            Letter letter = new Letter();
-
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\v11.0;
-                AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\MailClientDataBase.mdf;Integrated Security=True;");
-
-            SqlCommand cmd = new SqlCommand();
-            SqlDataReader dr;
-
-            cmd.Connection = _connection;
-            _connection.Open();
-
-            cmd.CommandText = "select * from Mail where Id='" + this.Id + "'";
-
-            dr = cmd.ExecuteReader();
-            if (dr.HasRows)
-            {
-                while (dr.Read())
-                {
-                    letter = new Letter(dr);
-                }
-            }
-
-            _connection.Close();
-
-            return letter;
         }
 
         public static List<ProxyLetter> GetRecieved(Profile user)
@@ -127,8 +102,6 @@ namespace GEMC
             }
 
             _connection.Close();
-
-
             return proxies;
         }
 
@@ -162,6 +135,33 @@ namespace GEMC
             return proxies;
         }
 
+        public Letter GetLetter()
+        {
+            Letter letter = new Letter();
 
+            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\v11.0;
+                AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\MailClientDataBase.mdf;Integrated Security=True;");
+
+            SqlCommand cmd = new SqlCommand();
+            SqlDataReader dr;
+
+            cmd.Connection = _connection;
+            _connection.Open();
+
+            cmd.CommandText = "select * from Mail where Id='" + this.Id + "'";
+
+            dr = cmd.ExecuteReader();
+            if (dr.HasRows)
+            {
+                while (dr.Read())
+                {
+                    letter = new Letter(dr);
+                }
+            }
+
+            _connection.Close();
+
+            return letter;
+        }
     }
 }
