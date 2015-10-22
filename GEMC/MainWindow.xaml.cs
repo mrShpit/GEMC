@@ -28,7 +28,6 @@
             this.InitializeComponent();
         }
 
-
         public void Window_Loaded(object sender, RoutedEventArgs e)
         {
             this.FillProfilesList();

@@ -21,10 +21,10 @@
     {
         private Profile mailSender;
 
-        public WindowSendMessage(Profile p)
+        public WindowSendMessage(Profile prof)
         {
             this.InitializeComponent();
-            this.mailSender = p;
+            this.mailSender = prof;
         }
 
         private void btSend_Click(object sender, RoutedEventArgs e)
