@@ -1,3 +1,1 @@
-<StyleCopViolations>
-  <Violation Section="Root.GEMC.FillSended.Fill%List`ProxyLetter%Profile" LineNumber="22" Source="C:\Users\Gleb\Desktop\GEMC\GEMC\FillSended.cs" RuleNamespace="StyleCop.CSharp.LayoutRules" Rule="CodeMustNotContainMultipleBlankLinesInARow" RuleId="SA1507">The code must not contain multiple blank lines in a row.</Violation>
-</StyleCopViolations>
+<StyleCopViolations />

@@ -89,6 +89,7 @@
 
             sw.WriteLine("Quit ");
             sw.Flush();
+
             messageNum = messageNum.Split(' ')[1];
             MessageBox.Show(messageNum);
             int mesNum = Convert.ToInt32(messageNum);
@@ -134,7 +135,6 @@
 
                 // Нужен конструктор для сборки письма из поп-кода
                 // if(letter.SendingTime<user.LastTimeChecked)
-                // if(Cntr==1)
                     done = true;
                cntr++;
             }
@@ -144,6 +144,10 @@
             user.LastTimeChecked = DateTime.Now;
             Profile.DB_Update(user);
             return newMail;
+        }
+
+        public void TryImap(Profile user)
+        {
         }
 
         public List<Letter> DownloadMailHistory(Profile user)

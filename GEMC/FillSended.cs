@@ -19,7 +19,6 @@
             cmd.Connection = _connection;
             _connection.Open();
 
-
             cmd.CommandText = "select * from Mail where ProfileId='" + user.Id + "' and AdressFrom='" + user.Adress + "'";
 
             dr = cmd.ExecuteReader();
