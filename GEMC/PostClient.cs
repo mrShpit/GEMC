@@ -46,7 +46,7 @@
             message.Subject = letter.Subject;
             message.Body = letter.Body;
             smtp.EnableSsl = true;
-            smtp.Send(message); // Отправка
+            smtp.Send(message);
         }
 
         public List<Letter> CheckForNewLettersPOP(Profile user)
