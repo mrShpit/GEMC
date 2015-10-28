@@ -3,29 +3,22 @@
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using System.Linq;
-    using System.Net;
     using System.Net.Mail;
-    using System.Net.Mime;
-    using System.Net.NetworkInformation;
     using System.Net.Security;
     using System.Net.Sockets;
-    using System.Text;
-    using System.Threading.Tasks;
     using System.Windows;
-    using System.Windows.Controls;
-    using System.Windows.Data;
-    using System.Windows.Documents;
-    using System.Windows.Input;
-    using System.Windows.Media;
-    using System.Windows.Media.Imaging;
-    using System.Windows.Navigation;
-    using System.Windows.Shapes;
-    using System.Web;
+    using System.Text;
 
     public sealed class PostClient
     {
         public static readonly PostClient Instance = new PostClient();
+
+        private static System.Net.Sockets.TcpClient tcpc = null;
+        private static System.Net.Security.SslStream ssl = null;
+        private static byte[] dummy;
+        private static byte[] buffer;
+        private static StringBuilder sb = new StringBuilder();
+        private static int bytes = -1;
 
         public PostClient()
         {
@@ -56,7 +49,7 @@
             smtp.Send(message); // Отправка
         }
 
-        public List<Letter> CheckForNewLetters(Profile user)
+        public List<Letter> CheckForNewLettersPOP(Profile user)
         {
             List<Letter> newMail = new List<Letter>();
             DateTime lastCheck = user.LastTimeChecked;
@@ -66,8 +59,16 @@
             sslstream.AuthenticateAsClient("pop." + user.Server); 
             System.IO.StreamWriter sw = new StreamWriter(sslstream); 
             System.IO.StreamReader reader = new StreamReader(sslstream);
-           
-            sw.WriteLine("USER " + user.Adress); 
+
+            if (user.Server == "gmail.com")
+            {
+                sw.WriteLine("USER recent:" + user.Adress);
+            }
+            else
+            {
+                sw.WriteLine("USER " + user.Adress);
+            }
+
             sw.Flush();
             sw.WriteLine("PASS " + user.Password);
             sw.Flush();
@@ -146,7 +147,80 @@
             return newMail;
         }
 
-        public void TryImap(Profile user)
+        public void receiveResponse(string command)
+        {
+            try
+            {
+                if (command != string.Empty)
+                {
+                    if (tcpc.Connected)
+                    {
+                        dummy = Encoding.ASCII.GetBytes(command);
+                        ssl.Write(dummy, 0, dummy.Length);
+                    }
+                    else
+                    {
+                        throw new ApplicationException("TCP CONNECTION DISCONNECTED");
+                    }
+                }
+
+                ssl.Flush();
+                buffer = new byte[12048];
+                bytes = ssl.Read(buffer, 0, 12048);
+                sb.Append(Encoding.ASCII.GetString(buffer));
+                MessageBox.Show(sb.ToString());
+                sb = new StringBuilder();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException(ex.Message);
+            }
+        }
+
+        public void receiveResponseEndless(string command)
+        {
+            try
+            {
+                if (command != string.Empty)
+                {
+                    if (tcpc.Connected)
+                    {
+                        dummy = Encoding.ASCII.GetBytes(command);
+                        ssl.Write(dummy, 0, dummy.Length);
+                    }
+                    else
+                    {
+                        throw new ApplicationException("TCP CONNECTION DISCONNECTED");
+                    }
+                }
+
+                ssl.Flush();
+                System.IO.StreamReader reader = new StreamReader(ssl);
+                string result = reader.ReadToEnd();
+                MessageBox.Show(result);
+                sb = new StringBuilder();
+            }
+            catch (Exception ex)
+            {
+                throw new ApplicationException(ex.Message);
+            }
+        }
+
+        public void CheckForNewLettersIMAP(Profile user)
+        {
+            tcpc = new TcpClient("imap." + user.Server, 993);
+            ssl = new System.Net.Security.SslStream(tcpc.GetStream());
+            ssl.AuthenticateAsClient("imap." + user.Server);
+            this.receiveResponse(string.Empty);
+            this.receiveResponse("$ LOGIN " + user.Adress + " " + user.Password + "\r\n");
+            this.receiveResponse("$ SELECT INBOX\r\n");
+
+            // this.receiveResponse("$ STATUS INBOX (MESSAGES)\r\n");
+            this.receiveResponseEndless("$ FETCH 20 BODY[header]\r\n");
+            this.receiveResponse("$ LOGOUT\r\n");
+        }
+
+        public void SaveLetterOnDisk()
         {
         }
 

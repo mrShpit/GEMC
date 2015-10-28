@@ -1,23 +1,10 @@
 ﻿namespace GEMC
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Data.SqlClient;
     using System.IO;
-    using System.Linq;
-    using System.Net.Mail;
     using System.Text;
-    using System.Threading.Tasks;
     using System.Windows;
     using System.Windows.Controls;
-    using System.Windows.Data;
-    using System.Windows.Documents;
-    using System.Windows.Input;
-    using System.Windows.Media;
-    using System.Windows.Media.Imaging;
-    using System.Windows.Navigation;
-    using System.Windows.Shapes;
-    
+
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
     /// </summary>
@@ -55,13 +42,13 @@
 
         private void btnRefreshProfile_Click(object sender, RoutedEventArgs e)
         {
-            string strin = File.ReadAllText(@"D:\WriteLinesX.txt", Encoding.GetEncoding(1251));
-            this.DecodeFrom64(strin);
-            if (lbProfiles.SelectedIndex != -1)
-            {
-                PostClient ps = PostClient.instance;
-                ps.CheckForNewLetters((Profile)lbProfiles.SelectedItem);
-            }
+            //  if (lbProfiles.SelectedIndex != -1)
+            //  {
+            //    PostClient ps = PostClient.instance;
+            //    ps.CheckForNewLettersPOP((Profile)lbProfiles.SelectedItem);
+            //  }
+            PostClient ps = PostClient.instance;
+            ps.CheckForNewLettersIMAP((Profile)lbProfiles.SelectedItem);
         }
 
         private void btnSendEMail_Click(object sender, RoutedEventArgs e)
@@ -99,28 +86,36 @@
 
         private void cbCategory_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            ProxyList letterProxies = new ProxyList();
-            if (cbCategory.SelectedIndex == 0)
+            try
             {
-                letterProxies.SetFillStrategy(new FillSended());
-                letterProxies.Fill((Profile)lbProfiles.SelectedItem);
-                lbMailBox.ItemsSource = letterProxies.ReturnList();
+                ProxyList letterProxies = new ProxyList();
+                if (cbCategory.SelectedIndex == 0)
+                {
+                    letterProxies.SetFillStrategy(new FillSended());
+                    letterProxies.Fill((Profile)lbProfiles.SelectedItem);
+                    lbMailBox.ItemsSource = letterProxies.ReturnList();
 
-                // lbMailBox.ItemsSource = ProxyLetter.GetSended((Profile)lbProfiles.SelectedItem);
+                    // lbMailBox.ItemsSource = ProxyLetter.GetSended((Profile)lbProfiles.SelectedItem);
+                }
+
+                if (cbCategory.SelectedIndex == 1)
+                {
+                    letterProxies.SetFillStrategy(new FillRecieved());
+                    letterProxies.Fill((Profile)lbProfiles.SelectedItem);
+                    lbMailBox.ItemsSource = letterProxies.ReturnList();
+
+                    // lbMailBox.ItemsSource = ProxyLetter.GetRecieved((Profile)lbProfiles.SelectedItem);
+                }
             }
-
-            if (cbCategory.SelectedIndex == 1)
+            catch
             {
-                letterProxies.SetFillStrategy(new FillRecieved());
-                letterProxies.Fill((Profile)lbProfiles.SelectedItem);
-                lbMailBox.ItemsSource = letterProxies.ReturnList();
-
-                // lbMailBox.ItemsSource = ProxyLetter.GetRecieved((Profile)lbProfiles.SelectedItem);
             }
         }
 
         private void DecodeFrom64(string encodedData)
         {
+            // string strin = File.ReadAllText(@"D:\WriteLinesX.txt", Encoding.GetEncoding(1251));
+            // this.DecodeFrom64(strin);
             byte[] encodedDataAsBytes
             = System.Convert.FromBase64String(encodedData);
             string returnValue =

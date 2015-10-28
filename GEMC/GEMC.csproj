@@ -54,9 +54,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ChilkatDotNet46">
-      <HintPath>..\ChilkatDotNet46-9.5.0-x64\ChilkatDotNet46.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
