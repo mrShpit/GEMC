@@ -25,7 +25,7 @@ DefaultDirName={pf}\{#Name}
 DefaultGroupName={#Name}
 
 ; Каталог, куда будет записан собранный setup и имя исполняемого файла
-OutputDir=D:\test-setup
+OutputDir=C:\test-setup
 OutputBaseFileName=test-setup
 
 ; Параметры сжатия
