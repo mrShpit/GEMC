@@ -129,7 +129,7 @@
             <GridSplitter Height="Auto"  Grid.Column="0" VerticalAlignment="Stretch" Width="5" HorizontalAlignment="Right"  Background="LightBlue"/>
            
 
-            <Grid Grid.Column="1" Background="LightBlue" >
+            <Grid Grid.Column="1" Background="Red" >
                 <Grid.RowDefinitions>
                     <RowDefinition />
                     <RowDefinition Height="40"/>
