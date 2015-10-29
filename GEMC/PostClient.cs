@@ -165,10 +165,11 @@
                 }
 
                 ssl.Flush();
-                buffer = new byte[12048];
-                bytes = ssl.Read(buffer, 0, 12048);
+                buffer = new byte[2048];
+                bytes = ssl.Read(buffer, 0, 2048);
                 sb.Append(Encoding.ASCII.GetString(buffer));
-                MessageBox.Show(sb.ToString());
+                TestWindow t = new TestWindow(sb.ToString());
+                t.Show();
                 sb = new StringBuilder();
             }
             catch (Exception ex)
@@ -216,7 +217,7 @@
             this.receiveResponse("$ SELECT INBOX\r\n");
 
             // this.receiveResponse("$ STATUS INBOX (MESSAGES)\r\n");
-            this.receiveResponseEndless("$ FETCH 20 BODY[header]\r\n");
+            this.receiveResponse("$ FETCH 20 BODY[header]\r\n");
             this.receiveResponse("$ LOGOUT\r\n");
         }
 
