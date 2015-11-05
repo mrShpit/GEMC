@@ -42,13 +42,10 @@
 
         private void btnRefreshProfile_Click(object sender, RoutedEventArgs e)
         {
-            //  if (lbProfiles.SelectedIndex != -1)
-            //  {
-            //    PostClient ps = PostClient.instance;
-            //    ps.CheckForNewLettersPOP((Profile)lbProfiles.SelectedItem);
-            //  }
-            PostClient ps = PostClient.instance;
-            ps.CheckForNewLettersIMAP((Profile)lbProfiles.SelectedItem);
+            // Постараться вернуть
+            // ImapScan.CheckForNewLettersIMAP((Profile)lbProfiles.SelectedItem, 20);
+            PostClient pc = PostClient.instance;
+            pc.CheckLetterByIMAP((Profile)lbProfiles.SelectedItem, 20);
         }
 
         private void btnSendEMail_Click(object sender, RoutedEventArgs e)

@@ -13,13 +13,6 @@
     {
         public static readonly PostClient Instance = new PostClient();
 
-        private static System.Net.Sockets.TcpClient tcpc = null;
-        private static System.Net.Security.SslStream ssl = null;
-        private static byte[] dummy;
-        private static byte[] buffer;
-        private static StringBuilder sb = new StringBuilder();
-        private static int bytes = -1;
-
         public PostClient()
         {
         }
@@ -30,6 +23,70 @@
             {
                 return Instance;
             }
+        }
+
+        public void CheckLetterByIMAP(Profile user, int letterNum)
+        {
+            Letter newLetter = new Letter();
+            ImapConsole console = new ImapConsole();
+            console.SetSSLConnection(user);
+
+            console.SendCommand(new ImapAuthenticate(user));
+            console.ExecuteCommand();
+            this.ImapRequest("$ SELECT INBOX\r\n");
+
+            console.SendCommand(new ImapGetHeaderOfLetter(letterNum));
+            List<string> letterHeader = (List<string>)console.ExecuteCommand();
+
+            foreach (string line in letterHeader)
+            {
+                if (line.Contains("From: "))
+                {
+                    MessageBox.Show(line.Substring(6));
+                }
+
+                if (line.Contains("Date: "))
+                {
+                    MessageBox.Show(line.Substring(6));
+                }
+
+                if (line.Contains("Subject: "))
+                {
+                    MessageBox.Show(line.Substring(9));
+                }
+            }
+
+            console.SetSSLConnection(user);
+            console.SendCommand(new ImapAuthenticate(user));
+            console.ExecuteCommand();
+            this.ImapRequest("$ SELECT INBOX\r\n");
+
+            console.SendCommand(new ImapGetTextOfLetter(letterNum));
+            newLetter.Body = (string)console.ExecuteCommand();
+        }
+
+        public string ImapRequest(string commandText)
+        {
+            byte[] dummy;
+            byte[] buffer;
+            int bytes = -1;
+            string str = string.Empty;
+
+            if (commandText != string.Empty)
+            {
+                if (ImapConsole._tcpc.Connected)
+                {
+                    dummy = Encoding.ASCII.GetBytes(commandText);
+                    ImapConsole._ssl.Write(dummy, 0, dummy.Length);
+                }
+            }
+
+            ImapConsole._ssl.Flush();
+            buffer = new byte[2048];
+            bytes = ImapConsole._ssl.Read(buffer, 0, 2048);
+            str = Encoding.ASCII.GetString(buffer);
+            ImapConsole._ssl.ReadTimeout = 1000;
+            return str.Replace("\0", string.Empty);
         }
 
         public void SendLetterSMTP(Profile sender, Letter letter)
@@ -47,6 +104,51 @@
             message.Body = letter.Body;
             smtp.EnableSsl = true;
             smtp.Send(message);
+        }
+
+        public int GetTotalLetterNum(Profile user)
+        {
+            TcpClient tcpclient = new TcpClient();
+            tcpclient.Connect("pop." + user.Server, user.PopPort);
+            System.Net.Security.SslStream sslstream = new SslStream(tcpclient.GetStream());
+            sslstream.AuthenticateAsClient("pop." + user.Server);
+            System.IO.StreamWriter sw = new StreamWriter(sslstream);
+            System.IO.StreamReader reader = new StreamReader(sslstream);
+
+            if (user.Server == "gmail.com")
+            {
+                sw.WriteLine("USER recent:" + user.Adress);
+            }
+            else
+            {
+                sw.WriteLine("USER " + user.Adress);
+            }
+
+            sw.Flush();
+            sw.WriteLine("PASS " + user.Password);
+            sw.Flush();
+            sw.WriteLine("LIST");
+            sw.Flush();
+            int counter = 0;
+            string strTemp = string.Empty;
+            string messageNum = string.Empty;
+            while ((strTemp = reader.ReadLine()) != null)
+            {
+                if (counter == 3)
+                {
+                    messageNum = strTemp;
+                    break;
+                }
+
+                counter++;
+            }
+
+            sw.WriteLine("Quit ");
+            sw.Flush();
+
+            messageNum = messageNum.Split(' ')[1];
+            MessageBox.Show(messageNum);
+            return Convert.ToInt32(messageNum);
         }
 
         public List<Letter> CheckForNewLettersPOP(Profile user)
@@ -145,123 +247,6 @@
             user.LastTimeChecked = DateTime.Now;
             Profile.DB_Update(user);
             return newMail;
-        }
-
-        public void receiveResponse(string command)
-        {
-            try
-            {
-                if (command != string.Empty)
-                {
-                    if (tcpc.Connected)
-                    {
-                        dummy = Encoding.ASCII.GetBytes(command);
-                        ssl.Write(dummy, 0, dummy.Length);
-                    }
-                    else
-                    {
-                        throw new ApplicationException("TCP CONNECTION DISCONNECTED");
-                    }
-                }
-
-                ssl.Flush();
-                buffer = new byte[2048];
-                bytes = ssl.Read(buffer, 0, 2048);
-                sb.Append(Encoding.ASCII.GetString(buffer));
-                TestWindow t = new TestWindow(sb.ToString());
-                t.Show();
-                sb = new StringBuilder();
-            }
-            catch (Exception ex)
-            {
-                throw new ApplicationException(ex.Message);
-            }
-        }
-
-        public void receiveResponseEndless(string command)
-        {
-            try
-            {
-                if (command != string.Empty)
-                {
-                    if (tcpc.Connected)
-                    {
-                        dummy = Encoding.ASCII.GetBytes(command);
-                        ssl.Write(dummy, 0, dummy.Length);
-                    }
-                    else
-                    {
-                        throw new ApplicationException("TCP CONNECTION DISCONNECTED");
-                    }
-                }
-
-                ssl.Flush();
-                System.IO.StreamReader reader = new StreamReader(ssl);
-                string result = reader.ReadToEnd();
-                MessageBox.Show(result);
-                sb = new StringBuilder();
-            }
-            catch (Exception ex)
-            {
-                throw new ApplicationException(ex.Message);
-            }
-        }
-
-        public void CheckForNewLettersIMAP(Profile user)
-        {
-            tcpc = new TcpClient("imap." + user.Server, 993);
-            ssl = new System.Net.Security.SslStream(tcpc.GetStream());
-            ssl.AuthenticateAsClient("imap." + user.Server);
-            this.receiveResponse(string.Empty);
-            this.receiveResponse("$ LOGIN " + user.Adress + " " + user.Password + "\r\n");
-            this.receiveResponse("$ SELECT INBOX\r\n");
-
-            // this.receiveResponse("$ STATUS INBOX (MESSAGES)\r\n");
-            this.receiveResponse("$ FETCH 20 BODY[header]\r\n");
-            this.receiveResponse("$ LOGOUT\r\n");
-        }
-
-        public void SaveLetterOnDisk()
-        {
-        }
-
-        public List<Letter> DownloadMailHistory(Profile user)
-        {
-            List<Letter> mail = new List<Letter>();
-
-            TcpClient tcpclient = new TcpClient(); 
-            tcpclient.Connect("pop." + user.Server, user.PopPort); // gmail uses port number 995 for POP 
-            System.Net.Security.SslStream sslstream = new SslStream(tcpclient.GetStream()); // This is Secure Stream // opened the connection between client and POP Server
-            sslstream.AuthenticateAsClient("pop." + user.Server); // authenticate as client 
-            System.IO.StreamWriter sw = new StreamWriter(sslstream); // Asssigned the writer to stream
-            System.IO.StreamReader reader = new StreamReader(sslstream); // Assigned reader to stream
-            sw.WriteLine("USER " + user.Adress); // refer POP rfc command, there very few around 6-9 command
-            sw.Flush();
-            sw.WriteLine("PASS " + user.Password);
-            sw.Flush();
-            sw.WriteLine("LIST");
-            sw.Flush();
-            string strTemp = string.Empty;
-            string str = string.Empty;
-            while ((strTemp = reader.ReadLine()) != null)
-            {
-                if (strTemp == ".")
-                {
-                    break;
-                }
-
-                if (strTemp.IndexOf("-ERR") != -1)
-                {
-                    break;
-                }
-
-                str += strTemp + "\n";
-            }
-
-            MessageBox.Show(str);
-            sw.WriteLine("Quit ");
-            sw.Flush();
-            return mail;
-        }
+        } // Не использовать
     }
 }

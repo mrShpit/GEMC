@@ -76,6 +76,12 @@
     <Compile Include="FillRecieved.cs" />
     <Compile Include="FillSended.cs" />
     <Compile Include="BuildStrategy.cs" />
+    <Compile Include="ImapAuthenticate.cs" />
+    <Compile Include="ImapCommand.cs" />
+    <Compile Include="ImapConsole.cs" />
+    <Compile Include="ImapGetHeaderOfLetter.cs" />
+    <Compile Include="ImapGetTextOfLetter.cs" />
+    <Compile Include="ImapScan.cs" />
     <Compile Include="ProxyLetter.cs" />
     <Compile Include="ProxyList.cs" />
     <Compile Include="TestWindow.xaml.cs">
