@@ -18,14 +18,17 @@
         public static void CheckForNewLettersIMAP(Profile user, int letterNum)
         {
             Letter newLetter = new Letter();
+            newLetter.To = user.Adress;
             Authenticate(user);
             ImapRequest("$ SELECT INBOX\r\n");
+            ImapRequest("$ STATUS INBOX (MESSAGES)\r\n");
             List<string> letterHeader = GetHeaderOfLetter(letterNum);
 
             foreach (string line in letterHeader)
             {
                 if (line.Contains("From: "))
                 {
+                    newLetter.From = line.Substring(6);
                     MessageBox.Show(line.Substring(6));
                 }
 
@@ -36,6 +39,7 @@
 
                 if (line.Contains("Subject: "))
                 {
+                    newLetter.Subject = line.Substring(9);
                     MessageBox.Show(line.Substring(9));
                 }
             }

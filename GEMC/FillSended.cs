@@ -11,8 +11,7 @@
     {
         public override void Fill(List<ProxyLetter> list, Profile user)
         {
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\v11.0;
-                AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\MailClientDataBase.mdf;Integrated Security=True;");
+            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True;");
 
             SqlCommand cmd = new SqlCommand();
             SqlDataReader dr;

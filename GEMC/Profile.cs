@@ -82,8 +82,8 @@
 
         public static void DB_Add(Profile user)
         {
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\v11.0;
-                AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\MailClientDataBase.mdf;Integrated Security=True;");
+            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=
+                                                                C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True");
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = _connection;
             _connection.Open();
@@ -103,8 +103,7 @@
 
         public static List<Profile> DB_Load()
         {
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\v11.0;
-                AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\MailClientDataBase.mdf;Integrated Security=True;");
+            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True");
             SqlCommand cmd = new SqlCommand();
             SqlDataReader dr;
             List<Profile> profileList = new List<Profile>();
@@ -139,8 +138,7 @@
 
         public static void DB_Update(Profile user)
         {
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\v11.0;
-                AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\MailClientDataBase.mdf;Integrated Security=True;");
+            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True;");
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = _connection;
             _connection.Open();
@@ -153,8 +151,7 @@
 
         public static void DB_Delete(Profile user)
         {
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\v11.0;
-                AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\MailClientDataBase.mdf;Integrated Security=True;");
+            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True;");
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = _connection;
             _connection.Open();

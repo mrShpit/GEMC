@@ -91,8 +91,7 @@
 
         public static void AddLetterToDB(Profile user, Letter letter)
         {
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\v11.0;AttachDbFilename=
-                C:\Users\Gleb\Desktop\GEMC\GEMC\MailClientDataBase.mdf;Integrated Security=True;");
+            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True;");
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = _connection;
             _connection.Open();
@@ -115,8 +114,7 @@
 
         public static void DeleteLetterFromDB(Letter letter)
         {
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\v11.0;AttachDbFilename=
-                        C:\Users\Gleb\Desktop\GEMC\GEMC\MailClientDataBase.mdf;Integrated Security=True;");
+            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True;");
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = _connection;
             _connection.Open();

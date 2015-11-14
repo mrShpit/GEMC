@@ -26,7 +26,9 @@
                 PostClient pc = PostClient.instance;
                 pc.SendLetterSMTP(this.mailSender, letter);
 
-                Letter.AddLetterToDB(this.mailSender, letter);
+                //Letter.AddLetterToDB(this.mailSender, letter);
+                LetterDataBaseModification ldbm = new LetterDataBaseModification(letter);
+                ldbm.AddLetterToDB(this.mailSender);
             }
         }
     }

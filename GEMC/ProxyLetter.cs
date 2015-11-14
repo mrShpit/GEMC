@@ -74,8 +74,7 @@
         {
             List<ProxyLetter> proxies = new List<ProxyLetter>();
 
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\v11.0;
-                AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\MailClientDataBase.mdf;Integrated Security=True;");
+            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True;");
 
             SqlCommand cmd = new SqlCommand();
             SqlDataReader dr;
@@ -105,8 +104,7 @@
         {
             List<ProxyLetter> proxies = new List<ProxyLetter>();
 
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\v11.0;
-                AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\MailClientDataBase.mdf;Integrated Security=True;");
+            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True;");
 
             SqlCommand cmd = new SqlCommand();
             SqlDataReader dr;
@@ -135,8 +133,7 @@
         {
             Letter letter = new Letter();
 
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\v11.0;
-                AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\MailClientDataBase.mdf;Integrated Security=True;");
+            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True;");
 
             SqlCommand cmd = new SqlCommand();
             SqlDataReader dr;

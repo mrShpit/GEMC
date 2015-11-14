@@ -4,6 +4,8 @@
     using System.Text;
     using System.Windows;
     using System.Windows.Controls;
+    using System.Data.SqlClient;
+    using System.Collections.Generic;
 
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
@@ -17,9 +19,17 @@
 
         public void Window_Loaded(object sender, RoutedEventArgs e)
         {
+            this.Start();
+        }
+
+        public void Start()
+        {
+            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\v11.0;AttachDbFilename=
+                C:\Users\Gleb\Desktop\GEMC\GEMC\MailClientDataBase.mdf;Integrated Security=True;");
+            _connection.Close();
             this.FillProfilesList();
             cbCategory.Items.Add("Отправленные");
-            cbCategory.Items.Add("Принятые"); 
+            cbCategory.Items.Add("Принятые");
         }
 
         public void FillProfilesList()
@@ -42,10 +52,17 @@
 
         private void btnRefreshProfile_Click(object sender, RoutedEventArgs e)
         {
+            PostClient pc = PostClient.instance;
+
             // Постараться вернуть
             // ImapScan.CheckForNewLettersIMAP((Profile)lbProfiles.SelectedItem, 20);
-            PostClient pc = PostClient.instance;
-            pc.CheckLetterByIMAP((Profile)lbProfiles.SelectedItem, 20);
+            // pc.CheckLetterByIMAP((Profile)lbProfiles.SelectedItem, 20);
+            List<Letter> list = pc.PullFreshLetters((Profile)lbProfiles.SelectedItem);
+            foreach (Letter letter in list)
+            {
+                LetterDataBaseModification ldbm = new LetterDataBaseModification(letter);
+                ldbm.AddLetterToDB((Profile)lbProfiles.SelectedItem);
+            }
         }
 
         private void btnSendEMail_Click(object sender, RoutedEventArgs e)

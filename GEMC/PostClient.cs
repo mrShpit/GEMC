@@ -25,14 +25,18 @@
             }
         }
 
-        public void CheckLetterByIMAP(Profile user, int letterNum)
+        public Letter CheckLetterByIMAP(Profile user, int letterNum)
         {
             Letter newLetter = new Letter();
+            newLetter.SetId();
+            newLetter.ProfileId = user.Id;
+            newLetter.To = user.Adress;
             ImapConsole console = new ImapConsole();
             console.SetSSLConnection(user);
 
             console.SendCommand(new ImapAuthenticate(user));
             console.ExecuteCommand();
+
             this.ImapRequest("$ SELECT INBOX\r\n");
 
             console.SendCommand(new ImapGetHeaderOfLetter(letterNum));
@@ -42,17 +46,27 @@
             {
                 if (line.Contains("From: "))
                 {
-                    MessageBox.Show(line.Substring(6));
+                    // MessageBox.Show("From: " + line.Substring(6));
+                    newLetter.From = line.Substring(6);
                 }
 
                 if (line.Contains("Date: "))
                 {
-                    MessageBox.Show(line.Substring(6));
+                    MessageBox.Show("Date: " + line.Substring(6));
+                    try
+                    {
+                        newLetter.SendingTime = Convert.ToDateTime(line.Substring(6));
+                    }
+                    catch
+                    {
+                        MessageBox.Show("Date malfunction");
+                    }
                 }
 
                 if (line.Contains("Subject: "))
                 {
-                    MessageBox.Show(line.Substring(9));
+                    // MessageBox.Show("Subject: " + line.Substring(9));
+                    newLetter.Subject = line.Substring(9);
                 }
             }
 
@@ -63,6 +77,7 @@
 
             console.SendCommand(new ImapGetTextOfLetter(letterNum));
             newLetter.Body = (string)console.ExecuteCommand();
+            return newLetter;
         }
 
         public string ImapRequest(string commandText)
@@ -108,47 +123,49 @@
 
         public int GetTotalLetterNum(Profile user)
         {
-            TcpClient tcpclient = new TcpClient();
-            tcpclient.Connect("pop." + user.Server, user.PopPort);
-            System.Net.Security.SslStream sslstream = new SslStream(tcpclient.GetStream());
-            sslstream.AuthenticateAsClient("pop." + user.Server);
-            System.IO.StreamWriter sw = new StreamWriter(sslstream);
-            System.IO.StreamReader reader = new StreamReader(sslstream);
-
-            if (user.Server == "gmail.com")
+            int result = 0;
+            ImapConsole console = new ImapConsole();
+            console.SetSSLConnection(user);
+            console.SendCommand(new ImapAuthenticate(user));
+            console.ExecuteCommand();
+            this.ImapRequest("$ SELECT INBOX\r\n");
+            string answer = this.ImapRequest("$ STATUS INBOX (MESSAGES)\r\n");
+            MessageBox.Show(answer);
+            foreach (string line in answer.Split('\n'))
             {
-                sw.WriteLine("USER recent:" + user.Adress);
-            }
-            else
-            {
-                sw.WriteLine("USER " + user.Adress);
-            }
-
-            sw.Flush();
-            sw.WriteLine("PASS " + user.Password);
-            sw.Flush();
-            sw.WriteLine("LIST");
-            sw.Flush();
-            int counter = 0;
-            string strTemp = string.Empty;
-            string messageNum = string.Empty;
-            while ((strTemp = reader.ReadLine()) != null)
-            {
-                if (counter == 3)
+                if (line.Contains("EXISTS"))
                 {
-                    messageNum = strTemp;
+                    result = Convert.ToInt32(line.Substring(2, line.IndexOf('E') - 2));
+                    MessageBox.Show(result.ToString());
+                    this.ImapRequest("$ LOGOUT\r\n");
+                }
+            }
+
+            return result;
+        }
+
+        public List<Letter> PullFreshLetters(Profile user)
+        {
+            List<Letter> newLettersList = new List<Letter>();
+
+            int totalLetterNumber = this.GetTotalLetterNum(user);
+
+            for (int i = totalLetterNumber; i > 0; i--)
+            {
+                Letter newLetter = this.CheckLetterByIMAP(user, i);
+                if (newLetter.SendingTime > user.LastTimeChecked)
+                {
+                    newLettersList.Add(newLetter);
+                }
+                else
+                {
                     break;
                 }
-
-                counter++;
             }
 
-            sw.WriteLine("Quit ");
-            sw.Flush();
-
-            messageNum = messageNum.Split(' ')[1];
-            MessageBox.Show(messageNum);
-            return Convert.ToInt32(messageNum);
+            // user.LastTimeChecked = DateTime.Now;
+            // Profile.DB_Update(user);
+            return newLettersList;
         }
 
         public List<Letter> CheckForNewLettersPOP(Profile user)
