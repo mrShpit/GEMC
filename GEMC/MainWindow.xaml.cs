@@ -60,8 +60,7 @@
             List<Letter> list = pc.PullFreshLetters((Profile)lbProfiles.SelectedItem);
             foreach (Letter letter in list)
             {
-                LetterDataBaseModification ldbm = new LetterDataBaseModification(letter);
-                ldbm.AddLetterToDB((Profile)lbProfiles.SelectedItem);
+                Letter.AddLetterToDB((Profile)lbProfiles.SelectedItem, letter);
             }
         }
 

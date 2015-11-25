@@ -82,8 +82,8 @@
     <Compile Include="ImapGetHeaderOfLetter.cs" />
     <Compile Include="ImapGetTextOfLetter.cs" />
     <Compile Include="ImapScan.cs" />
-    <Compile Include="LetterDataBaseModification.cs" />
     <Compile Include="LetterDecorator.cs" />
+    <Compile Include="LetterPreparator%28Decore%29.cs" />
     <Compile Include="ProxyLetter.cs" />
     <Compile Include="ProxyList.cs" />
     <Compile Include="TestWindow.xaml.cs">

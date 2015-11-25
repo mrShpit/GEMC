@@ -155,12 +155,15 @@
                 Letter newLetter = this.CheckLetterByIMAP(user, i);
                 if (newLetter.SendingTime > user.LastTimeChecked)
                 {
-                    newLettersList.Add(newLetter);
                 }
-                else
-                {
-                    break;
-                }
+
+                //  {
+                //    newLettersList.Add(newLetter);
+                //  }
+                //  else
+                //  {
+                //    break;
+                //  }
             }
 
             // user.LastTimeChecked = DateTime.Now;

@@ -23,12 +23,11 @@
                 Letter letter = new Letter(this.mailSender.Id, tbSubject.Text, tbMessage.Text, this.mailSender.Adress, tbAdress.Text, "Default", DateTime.Now);
                 letter.SetId();
 
-                PostClient pc = PostClient.instance;
-                pc.SendLetterSMTP(this.mailSender, letter);
-
-                //Letter.AddLetterToDB(this.mailSender, letter);
-                LetterDataBaseModification ldbm = new LetterDataBaseModification(letter);
-                ldbm.AddLetterToDB(this.mailSender);
+                // PostClient pc = PostClient.instance;
+                // pc.SendLetterSMTP(this.mailSender, letter);
+                LetterPreparator letPreparator = new LetterPreparator(letter);
+                letPreparator.SendIt(this.mailSender);
+                Letter.AddLetterToDB(this.mailSender, letter);
             }
         }
     }
