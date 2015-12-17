@@ -33,19 +33,13 @@
                     sb.Append(lastReadPart = pc.ImapRequest(string.Empty));
                 }
             }
-
+            
             List<string> message = new List<string>();
             foreach (string line in sb.ToString().Split('\n'))
             {
-                message.Add(line + "\n");
+                message.Add(line);
             }
-
-            sb.Clear();
-            foreach (string line in message)
-            {
-                sb.Append(line);
-            }
-
+            
             pc.ImapRequest("$ LOGOUT\r\n");
             return message;
         }

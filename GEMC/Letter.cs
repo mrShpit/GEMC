@@ -55,6 +55,21 @@
             set { this._category = value; }
         }
 
+        public string SubjectPreview
+        {
+            get
+            {
+                if (this._subject.Length < 14)
+                {
+                    return this._subject;
+                }
+                else
+                {
+                    return this._subject.Substring(0, 14) + "...";
+                }
+            }
+        }
+
         private DateTime _sendingTime;
 
         public DateTime SendingTime
@@ -109,7 +124,18 @@
             cmd.Parameters.AddWithValue("@t", letter.SendingTime);
             cmd.ExecuteNonQuery();
             _connection.Close();
-            MessageBox.Show("Sended and added to db");
+        }
+
+        public static void ChangeLetterFolder(ProxyLetter letter, string folderName)
+        {
+            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True;");
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = _connection;
+            _connection.Open();
+            StringBuilder sb = new StringBuilder();
+            cmd.CommandText = "Update Mail SET Category = '" + folderName + "' where Id = '" + letter.Id + "'";
+            cmd.ExecuteNonQuery();
+            _connection.Close();
         }
 
         public static void DeleteLetterFromDB(Letter letter)

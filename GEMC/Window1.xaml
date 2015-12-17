@@ -1,0 +1,31 @@
+﻿<Window x:Class="GEMC.Window1"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:GEMC"
+        mc:Ignorable="d"
+        Title="Window1" Height="300" Width="300">
+    <Grid>
+
+        <TreeView Name="tvMain" ItemsSource="{Binding Profiles}">
+
+            <!-- Conference teamplate -->
+            <TreeView.ItemTemplate>
+                <HierarchicalDataTemplate ItemsSource="{Binding ProxyMailFolders}">
+                    <TextBlock Foreground="Red" Text="{Binding Adress}" />
+
+                    <!-- Team template -->
+                    <HierarchicalDataTemplate.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding listName}" />
+                        </DataTemplate>
+                    </HierarchicalDataTemplate.ItemTemplate>
+
+                </HierarchicalDataTemplate>
+            </TreeView.ItemTemplate>
+
+        </TreeView>
+
+    </Grid>
+</Window>

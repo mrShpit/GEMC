@@ -1,33 +1,104 @@
 ﻿<Window x:Class="GEMC.WindowAddProfile"
+        x:Name="AddProfileWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="WindowAddProfile" Height="360" Width="350">
-    <Grid>
-        <Grid.RowDefinitions>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            <RowDefinition/>
-            
-        </Grid.RowDefinitions>
-        <TextBlock Text="Введите имя профиля" HorizontalAlignment="Center"  Grid.Row="0" VerticalAlignment="Center" />
-        <TextBox  Name="tbProfileName" Grid.Row="1" Width="240" Margin="3" Background="LightGoldenrodYellow"/>
+        Title="WindowAddProfile" Height="360" Width="350"
+        ResizeMode="NoResize" 
+        WindowStyle="None" 
+        AllowsTransparency="True" MouseLeftButtonDown="Window_MouseLeftButtonDown" Loaded="AddProfileWindow_Loaded"
+        >
+    <Window.Resources>
+        <SolidColorBrush x:Key="StyleColor" Color="White"/>
 
-        <TextBlock Text="Введите адрес почтового ящика" HorizontalAlignment="Center"  Grid.Row="2" VerticalAlignment="Center" />
-        <TextBox Name="tbAdress" Grid.Row="3" Width="240" Margin="3" Background="LightGoldenrodYellow"/>
+        <ControlTemplate x:Key="SimpleButtonTemplate" TargetType="Button">
 
-        <TextBlock Text="Введите пароль почтового ящика" HorizontalAlignment="Center"  Grid.Row="4" VerticalAlignment="Center" />
-        <PasswordBox Name="tbPassword" Grid.Row="5" Width="240" Margin="3" Background="LightGoldenrodYellow"/>
+            <Grid Name="GridButt" Background="White" >
+                <Border  BorderThickness="1" BorderBrush="Black">
+                    <Border BorderThickness="1" BorderBrush="White">
+                        <ContentPresenter RecognizesAccessKey="True" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                </Border>
+            </Grid>
 
-        <TextBlock Text="Выберите сервер почтового ящика" HorizontalAlignment="Center"  Grid.Row="6" VerticalAlignment="Center" />
-        <ComboBox Name="cbServer" Grid.Row="7" Width="240" Margin="3" Background="LightGoldenrodYellow"/>
+            <ControlTemplate.Triggers>
+                <EventTrigger RoutedEvent="MouseEnter">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation From="White" To="LightBlue" Duration="0:0:0.3" Storyboard.TargetName="GridButt" Storyboard.TargetProperty="Background.Color"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
 
-        <Button Name="byAccept"  Content="Создать" Grid.Row="9" Margin="2" Width="200" Click="byAccept_Click"/>
-    </Grid>
+                <EventTrigger RoutedEvent="MouseLeave">
+                    <BeginStoryboard>
+                        <Storyboard>
+                            <ColorAnimation From="LightBlue" To="White" Duration="0:0:0.3" Storyboard.TargetName="GridButt" Storyboard.TargetProperty="Background.Color"/>
+                        </Storyboard>
+                    </BeginStoryboard>
+                </EventTrigger>
+
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <ControlTemplate x:Key="CloseButtonTemplate" TargetType="Button">
+
+            <Grid Name="GridButt" Background="White"  >
+                <ContentPresenter Name="Content" RecognizesAccessKey="True" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            </Grid>
+
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter TargetName="GridButt" Property="Background" Value="Red"/>
+                    <Setter  Property="Foreground" Value="White"/>
+                </Trigger>
+
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+    </Window.Resources>
+    <Border BorderThickness="1" BorderBrush="LightGray">
+        <Grid Background="#FFF3F3F3" >
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30"/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition/>
+                <RowDefinition Height="10"/>
+                <RowDefinition/>
+                <RowDefinition Height="10"/>
+            </Grid.RowDefinitions>
+
+            <Rectangle Fill="Black" Opacity="0.5" >
+                <Rectangle.Effect>
+                    <BlurEffect Radius="15"/>
+                </Rectangle.Effect>
+            </Rectangle>
+            <DockPanel Name="MenuPanel" LastChildFill="true" Background="White">
+                <Button Name="btClose" Width="30" VerticalAlignment="Stretch" DockPanel.Dock="Right"  
+                        FontSize="17" Content="×" Template="{StaticResource CloseButtonTemplate}" Click="btClose_Click"/>
+                <Border/>
+            </DockPanel>
+            <TextBlock Text="Введите имя профиля" HorizontalAlignment="Center"  Grid.Row="1" VerticalAlignment="Center" />
+            <TextBox  Name="tbProfileName" Grid.Row="2" Width="240" Margin="3" Background="{DynamicResource StyleColor}"/>
+
+            <TextBlock Text="Введите адрес почтового ящика" HorizontalAlignment="Center"  Grid.Row="3" VerticalAlignment="Center" />
+            <TextBox Name="tbAdress" Grid.Row="4" Width="240" Margin="3" Background="{DynamicResource StyleColor}"/>
+
+            <TextBlock Text="Введите пароль почтового ящика" HorizontalAlignment="Center"  Grid.Row="5" VerticalAlignment="Center" />
+            <PasswordBox Name="tbPassword" Grid.Row="6" Width="240" Margin="3" Background="{DynamicResource StyleColor}"/>
+
+            <TextBlock Text="Выберите сервер почтового ящика" HorizontalAlignment="Center"  Grid.Row="7" VerticalAlignment="Center" />
+            <ComboBox Name="cbServer" Grid.Row="8" Width="240" Margin="3" Background="{DynamicResource StyleColor}">
+                <ComboBoxItem Content="mail.ru"/>
+                <ComboBoxItem Content="gmail.com"/>
+                <ComboBoxItem Content="yandex.ru"/>
+            </ComboBox>
+
+            <Button Template="{StaticResource SimpleButtonTemplate}" Name="byAccept"  Content="Создать" Grid.Row="10" Margin="2" Width="200" Click="byAccept_Click"/>
+        </Grid>
+    </Border>
 </Window>

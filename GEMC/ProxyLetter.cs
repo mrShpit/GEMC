@@ -1,18 +1,51 @@
 ﻿namespace GEMC
 {
     using System;
-    using System.Collections.Generic;
+    using System.ComponentModel;
     using System.Data.SqlClient;
+    using System.Collections.Generic;
 
     public class ProxyLetter
     {
-        public ProxyLetter(string id, string subject)
+        public static List<ProxyLetter> CheckedItems = new List<ProxyLetter>();
+
+        public static void UncheckAll()
+        {
+            for (int i = 0; i < CheckedItems.Count; i++)
+            {
+                CheckedItems[i].IsChecked = false;
+            }
+        }
+
+        public ProxyLetter(string id, string subject, DateTime sendtime)
         {
             this.Id = id;
             this.Subject = subject;
+            this.SendTime = sendtime;
         }
 
-        private Letter letter = new Letter();
+        private bool isChecked;
+
+        public bool IsChecked
+        {
+            get
+            {
+                return this.isChecked;
+            }
+
+            set
+            {
+                this.isChecked = value;
+                if (this.isChecked == true)
+                {
+                    ProxyLetter.CheckedItems.Add(this);
+                }
+                else
+                {
+                    ProxyLetter.CheckedItems.Remove(this);
+                }
+            }
+        }
 
         public string Id
         {
@@ -27,16 +60,33 @@
             }
         }
 
+        private string subject;
+
         public string Subject
         {
             get
             {
-                return this.letter.Subject;
+                return this.subject;
             }
 
             set
             {
-                this.letter.Subject = value;
+                this.subject = value;
+            }
+        }
+
+        public string SubjectPreview
+        {
+            get
+            {
+                if (this.subject.Length < 20)
+                {
+                    return this.subject;
+                }
+                else
+                {
+                    return this.subject.Substring(0, 20) + "...";
+                }
             }
         }
 
@@ -70,65 +120,6 @@
             }
         }
 
-        public static List<ProxyLetter> GetRecieved(Profile user)
-        {
-            List<ProxyLetter> proxies = new List<ProxyLetter>();
-
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True;");
-
-            SqlCommand cmd = new SqlCommand();
-            SqlDataReader dr;
-
-            cmd.Connection = _connection;
-            _connection.Open();
-
-            cmd.CommandText = "select * from Mail where ProfileId='" + user.Id + "' and AdressTo='" + user.Adress + "'";
-
-            dr = cmd.ExecuteReader();
-            if (dr.HasRows)
-            {
-                while (dr.Read())
-                {
-                    ProxyLetter proxy = new ProxyLetter(dr[0].ToString(), dr[2].ToString());
-                    proxy.Interlocutor = dr[4].ToString();
-                    proxy.SendTime = Convert.ToDateTime(dr[7]);
-                    proxies.Add(proxy);
-                }
-            }
-
-            _connection.Close();
-            return proxies;
-        }
-
-        public static List<ProxyLetter> GetSended(Profile user)
-        {
-            List<ProxyLetter> proxies = new List<ProxyLetter>();
-
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True;");
-
-            SqlCommand cmd = new SqlCommand();
-            SqlDataReader dr;
-
-            cmd.Connection = _connection;
-            _connection.Open();
-
-            cmd.CommandText = "select * from Mail where ProfileId='" + user.Id + "' and AdressFrom='" + user.Adress + "'";
-
-            dr = cmd.ExecuteReader();
-            if (dr.HasRows)
-            {
-                while (dr.Read())
-                {
-                    ProxyLetter proxy = new ProxyLetter(dr[0].ToString(), dr[2].ToString());
-                    proxy.Interlocutor = dr[5].ToString();
-                    proxies.Add(proxy);
-                }
-            }
-
-            _connection.Close();
-            return proxies;
-        }
-
         public Letter GetLetter()
         {
             Letter letter = new Letter();
@@ -156,5 +147,7 @@
 
             return letter;
         }
+
+        private Letter letter = new Letter();
     }
 }

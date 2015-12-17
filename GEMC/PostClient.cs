@@ -31,9 +31,14 @@
             newLetter.SetId();
             newLetter.ProfileId = user.Id;
             newLetter.To = user.Adress;
+            newLetter.Category = "Inbox";
+
+            bool subjectFound = false;
+            bool dateFound = false;
+            bool fromFound = false;
+
             ImapConsole console = new ImapConsole();
             console.SetSSLConnection(user);
-
             console.SendCommand(new ImapAuthenticate(user));
             console.ExecuteCommand();
 
@@ -44,29 +49,56 @@
 
             foreach (string line in letterHeader)
             {
-                if (line.Contains("From: "))
+                if (!fromFound && line.Contains("From: "))
                 {
-                    // MessageBox.Show("From: " + line.Substring(6));
-                    newLetter.From = line.Substring(6);
+                    string thisLine = line;
+                    if (line.Contains("<"))
+                    {
+                        thisLine = line.Substring(line.IndexOf('<') + 1, line.IndexOf('>') - line.IndexOf('<') - 1);
+                        newLetter.From = thisLine;
+                    }
+                    else
+                    {
+                        newLetter.From = thisLine.Substring(6);
+                    }
+
+                    fromFound = true;
                 }
 
-                if (line.Contains("Date: "))
+                if (!dateFound && line.Length > 6 && line.Substring(0, 6) == "Date: ")
                 {
-                    MessageBox.Show("Date: " + line.Substring(6));
-                    try
+                    string thisLine = line;
+                    if (line.Contains("+"))
                     {
-                        newLetter.SendingTime = Convert.ToDateTime(line.Substring(6));
+                        thisLine = line.Substring(0, line.IndexOf('+'));
                     }
-                    catch
+                    else if (line.Contains("-"))
                     {
-                        MessageBox.Show("Date malfunction");
+                        thisLine = line.Substring(0, line.IndexOf('-'));
                     }
+                    
+                    newLetter.SendingTime = Convert.ToDateTime(thisLine.Substring(6));
+                    dateFound = true;
                 }
 
-                if (line.Contains("Subject: "))
+                if (!subjectFound && line.Contains("Subject: "))
                 {
-                    // MessageBox.Show("Subject: " + line.Substring(9));
-                    newLetter.Subject = line.Substring(9);
+                    newLetter.Subject = line.Substring(9).Replace("\r", string.Empty);
+                    if (newLetter.Subject.Substring(0, 5) == "=?utf")
+                    {
+                        newLetter.Subject = newLetter.Subject.Substring(10, newLetter.Subject.Length - 10);
+                        interpreterContext iC = new interpreterContext(newLetter.Subject);
+                        DefaultExpression ex = new DefaultExpression();
+                        ex.Interpret(iC);
+                        newLetter.Subject = ex.UseEncoding(iC);
+                    }
+
+                    subjectFound = true;
+                }
+
+                if (subjectFound && dateFound && fromFound)
+                {
+                    break;
                 }
             }
 
@@ -77,6 +109,7 @@
 
             console.SendCommand(new ImapGetTextOfLetter(letterNum));
             newLetter.Body = (string)console.ExecuteCommand();
+
             return newLetter;
         }
 
@@ -111,7 +144,6 @@
             // SmtpClient Smtp = new SmtpClient("smtp.gmail.com", 587);
             SmtpClient smtp = new SmtpClient("smtp." + sender.Server, sender.SmtpPort); // Сервер и порт
             smtp.Credentials = new System.Net.NetworkCredential(sender.Adress, sender.Password);  // Логин и пароль
-            ////Формирование письма
             MailMessage message = new MailMessage();
             message.From = new MailAddress(sender.Adress);
             message.To.Add(new MailAddress(letter.To));
@@ -130,13 +162,11 @@
             console.ExecuteCommand();
             this.ImapRequest("$ SELECT INBOX\r\n");
             string answer = this.ImapRequest("$ STATUS INBOX (MESSAGES)\r\n");
-            MessageBox.Show(answer);
             foreach (string line in answer.Split('\n'))
             {
                 if (line.Contains("EXISTS"))
                 {
                     result = Convert.ToInt32(line.Substring(2, line.IndexOf('E') - 2));
-                    MessageBox.Show(result.ToString());
                     this.ImapRequest("$ LOGOUT\r\n");
                 }
             }
@@ -148,6 +178,9 @@
         {
             List<Letter> newLettersList = new List<Letter>();
 
+            DateTime start = DateTime.Now;
+            TimeSpan time;
+
             int totalLetterNumber = this.GetTotalLetterNum(user);
 
             for (int i = totalLetterNumber; i > 0; i--)
@@ -155,118 +188,21 @@
                 Letter newLetter = this.CheckLetterByIMAP(user, i);
                 if (newLetter.SendingTime > user.LastTimeChecked)
                 {
+                    newLettersList.Add(newLetter);
                 }
-
-                //  {
-                //    newLettersList.Add(newLetter);
-                //  }
-                //  else
-                //  {
-                //    break;
-                //  }
+                else
+                {
+                    break;
+                }
             }
+
+            time = DateTime.Now - start;
+
+            TimeSpan test = time;
 
             // user.LastTimeChecked = DateTime.Now;
             // Profile.DB_Update(user);
             return newLettersList;
         }
-
-        public List<Letter> CheckForNewLettersPOP(Profile user)
-        {
-            List<Letter> newMail = new List<Letter>();
-            DateTime lastCheck = user.LastTimeChecked;
-            TcpClient tcpclient = new TcpClient(); 
-            tcpclient.Connect("pop." + user.Server, user.PopPort); 
-            System.Net.Security.SslStream sslstream = new SslStream(tcpclient.GetStream());
-            sslstream.AuthenticateAsClient("pop." + user.Server); 
-            System.IO.StreamWriter sw = new StreamWriter(sslstream); 
-            System.IO.StreamReader reader = new StreamReader(sslstream);
-
-            if (user.Server == "gmail.com")
-            {
-                sw.WriteLine("USER recent:" + user.Adress);
-            }
-            else
-            {
-                sw.WriteLine("USER " + user.Adress);
-            }
-
-            sw.Flush();
-            sw.WriteLine("PASS " + user.Password);
-            sw.Flush();
-            sw.WriteLine("LIST");
-            sw.Flush();            
-            int counter = 0;
-            string strTemp = string.Empty;
-            string messageNum = string.Empty;
-            while ((strTemp = reader.ReadLine()) != null)
-            {
-                if (counter == 3)
-                {
-                    messageNum = strTemp;
-                    break;
-                }
-
-                counter++;
-            }
-
-            sw.WriteLine("Quit ");
-            sw.Flush();
-
-            messageNum = messageNum.Split(' ')[1];
-            MessageBox.Show(messageNum);
-            int mesNum = Convert.ToInt32(messageNum);
-            tcpclient = new TcpClient();
-            tcpclient.Connect("pop." + user.Server, user.PopPort);
-            sslstream = new SslStream(tcpclient.GetStream());
-            sslstream.AuthenticateAsClient("pop." + user.Server);
-            sw = new StreamWriter(sslstream);
-            reader = new StreamReader(sslstream);
-            sw.WriteLine("USER " + user.Adress);
-            sw.Flush();
-            sw.WriteLine("PASS " + user.Password);
-            sw.Flush();
-            strTemp = string.Empty;
-            string str = string.Empty;
-            bool done = false;
-            int cntr = 0;       
-            while (!done)
-            {
-                str = string.Empty;
-
-                sw.WriteLine("RETR " + mesNum.ToString());
-                sw.Flush();
-                while ((strTemp = reader.ReadLine()) != null)
-                {
-                    if (strTemp == ".")
-                    {
-                        break;
-                    }
-
-                    if (strTemp.IndexOf("-ERR") != -1)
-                    {
-                        break;
-                    }
-
-                    str += strTemp + "\n";
-                }
-                
-                TestWindow t = new TestWindow(str);
-                t.Show();
-
-                mesNum--;        
-
-                // Нужен конструктор для сборки письма из поп-кода
-                // if(letter.SendingTime<user.LastTimeChecked)
-                    done = true;
-               cntr++;
-            }
-
-            sw.WriteLine("Quit ");
-            sw.Flush();
-            user.LastTimeChecked = DateTime.Now;
-            Profile.DB_Update(user);
-            return newMail;
-        } // Не использовать
     }
 }

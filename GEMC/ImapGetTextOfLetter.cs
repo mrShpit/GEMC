@@ -52,9 +52,7 @@
             {
                 sb.Append(line);
             }
-
-            TestWindow t = new TestWindow(sb.ToString());
-            t.Show();
+            
             return sb.ToString();
         }
     }

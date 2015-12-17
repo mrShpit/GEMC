@@ -25,7 +25,7 @@
             {
                 while (dr.Read())
                 {
-                    ProxyLetter proxy = new ProxyLetter(dr[0].ToString(), dr[2].ToString());
+                    ProxyLetter proxy = new ProxyLetter(dr[0].ToString(), dr[2].ToString(), Convert.ToDateTime(dr[7]));
                     proxy.Interlocutor = dr[5].ToString();
                     list.Add(proxy);
                 }

@@ -64,6 +64,11 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="Telerik.Windows.Controls, Version=2015.3.1104.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL" />
+    <Reference Include="Telerik.Windows.Controls.Navigation, Version=2015.3.1104.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL" />
+    <Reference Include="Telerik.Windows.Data, Version=2015.3.1104.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL" />
+    <Reference Include="UIAutomationProvider" />
+    <Reference Include="UIAutomationTypes" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -73,6 +78,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Expression.cs" />
     <Compile Include="FillRecieved.cs" />
     <Compile Include="FillSended.cs" />
     <Compile Include="BuildStrategy.cs" />
@@ -82,12 +88,18 @@
     <Compile Include="ImapGetHeaderOfLetter.cs" />
     <Compile Include="ImapGetTextOfLetter.cs" />
     <Compile Include="ImapScan.cs" />
-    <Compile Include="LetterDecorator.cs" />
-    <Compile Include="LetterPreparator%28Decore%29.cs" />
+    <Compile Include="InitiateIMAP.cs" />
+    <Compile Include="InitiatePOP.cs" />
+    <Compile Include="InternetProtocol.cs" />
+    <Compile Include="interpreterContext.cs" />
     <Compile Include="ProxyLetter.cs" />
     <Compile Include="ProxyList.cs" />
+    <Compile Include="ServerProtocol.cs" />
     <Compile Include="TestWindow.xaml.cs">
       <DependentUpon>TestWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Window1.xaml.cs">
+      <DependentUpon>Window1.xaml</DependentUpon>
     </Compile>
     <Compile Include="WindowAddProfile.xaml.cs">
       <DependentUpon>WindowAddProfile.xaml</DependentUpon>
@@ -110,6 +122,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Page Include="TestWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Window1.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -138,6 +154,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <EmbeddedResource Include="Properties\Licenses.licx" />
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -177,7 +194,16 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <DependentUpon>EMCdataBase.mdf</DependentUpon>
     </Content>
+    <Resource Include="Resources\trash.png" />
+    <Resource Include="Resources\spam.png" />
+    <Resource Include="Resources\userIcon.png" />
+    <Resource Include="Resources\helpIcon.png" />
+    <Resource Include="Resources\getMailIcon.png" />
+    <Resource Include="Resources\gearIcon.png" />
+    <Resource Include="Resources\letterIcon.png" />
+    <Resource Include="Resources\Letter G blue.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Visual-StyleCop.MSBuild.4.7.58.3\build\Visual-StyleCop.MSBuild.Targets" Condition="Exists('..\packages\Visual-StyleCop.MSBuild.4.7.58.3\build\Visual-StyleCop.MSBuild.Targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
