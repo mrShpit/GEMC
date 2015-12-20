@@ -43,14 +43,11 @@ D:\GEMC2\GEMC\obj\Release\WindowAddProfile.baml
 D:\GEMC2\GEMC\obj\Release\WindowSendMessage.baml
 D:\GEMC2\GEMC\obj\Release\MainWindow.g.cs
 D:\GEMC2\GEMC\obj\Release\TestWindow.g.cs
-D:\GEMC2\GEMC\obj\Release\Window1.g.cs
 D:\GEMC2\GEMC\obj\Release\WindowAddProfile.g.cs
 D:\GEMC2\GEMC\obj\Release\WindowSendMessage.g.cs
 D:\GEMC2\GEMC\obj\Release\App.g.cs
 D:\GEMC2\GEMC\obj\Release\GEMC_Content.g.cs
 D:\GEMC2\GEMC\obj\Release\GEMC_MarkupCompile.cache
-D:\GEMC2\GEMC\obj\Release\GEMC_MarkupCompile.lref
-D:\GEMC2\GEMC\obj\Release\Window1.baml
 D:\GEMC2\GEMC\obj\Release\GEMC.g.resources
 D:\GEMC2\GEMC\obj\Release\GEMC.Properties.Resources.resources
 D:\GEMC2\GEMC\obj\Release\GEMC.csproj.GenerateResource.Cache

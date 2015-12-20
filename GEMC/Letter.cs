@@ -145,7 +145,7 @@
             cmd.Connection = _connection;
             _connection.Open();
             StringBuilder sb = new StringBuilder();
-            cmd.CommandText = "@delete from Animes where Id='" + letter.Id + "'";
+            cmd.CommandText = "Delete from Mail where Id='" + letter.Id + "'";
             cmd.ExecuteNonQuery();
             _connection.Close();
             MessageBox.Show("Deleted");

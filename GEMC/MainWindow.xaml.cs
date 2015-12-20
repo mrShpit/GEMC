@@ -39,6 +39,7 @@
             dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 20);
             dispatcherTimer.Start();
             SearchBox.SelectedIndex = 2;
+            this.DataContext = this.MainPostWindow;
         }
 
         public void Start()
@@ -62,7 +63,6 @@
 
         public void FillProfilesListFull()
         {
-            this.DataContext = this.MainPostWindow;
             this.profilesList = Profile.DB_Load();
 
             for (int i = 0; i < this.profilesList.Count; i++)
@@ -346,7 +346,7 @@
                 double height = this.Height;
                 double width = this.Width;
 
-                WindowSendMessage wsm = new WindowSendMessage(user, location, height, width);
+                WindowSendMessage wsm = new WindowSendMessage(user, location, height, width, string.Empty, string.Empty);
                 wsm.Owner = this;
                 wsm.ShowDialog();
             }
@@ -404,11 +404,8 @@
             }
         }
 
-        private void btSpam_Click(object sender, RoutedEventArgs e)
+        private int DetectUserIndexInTree(Profile user)
         {
-            ProxyList selectedList = (ProxyList)tvMain.SelectedItem;
-            Profile user = Profile.DB_GetByID(selectedList.masterId);
-
             int userInd = -1;
             for (int i = 0; i < tvMain.Items.Count; i++)
             {
@@ -418,7 +415,20 @@
                 }
             }
 
+            return userInd;
+        }
+
+        private void btSpam_Click(object sender, RoutedEventArgs e)
+        {
+            ProxyList selectedList = (ProxyList)tvMain.SelectedItem;
+            Profile user = Profile.DB_GetByID(selectedList.masterId);
+            int userInd = this.DetectUserIndexInTree(user);
             int curListInd = this.profilesList[userInd].ProxyMailFolders.IndexOf(selectedList);
+
+            if (this.profilesList[userInd].ProxyMailFolders[curListInd].listName == "Спам")
+            {
+                return;
+            }
 
             int spamInd = -1;
             for (int i = 0; i < this.profilesList[userInd].ProxyMailFolders.Count; i++)
@@ -433,30 +443,20 @@
             {
                 this.profilesList[userInd].ProxyMailFolders[curListInd].ProxyMailList.Remove(letter);
                 this.profilesList[userInd].ProxyMailFolders[spamInd].ProxyMailList.Add(letter);
-
                 Letter.ChangeLetterFolder(letter, "Spam");
             }
 
             ProxyLetter.UncheckAll();
+            this.tvMain.Items.Refresh();
 
-            lbMailBox.ItemsSource = null;
-            lbMailBox.ItemsSource = selectedList.ProxyMailList;
+            return;
         }
 
         private void btDelete_Click(object sender, RoutedEventArgs e)
         {
             ProxyList selectedList = (ProxyList)tvMain.SelectedItem;
             Profile user = Profile.DB_GetByID(selectedList.masterId);
-
-            int userInd = -1;
-            for (int i = 0; i < tvMain.Items.Count; i++)
-            {
-                if (user.Id == ((Profile)tvMain.Items[i]).Id)
-                {
-                    userInd = i;
-                }
-            }
-
+            int userInd = this.DetectUserIndexInTree(user);
             int curListInd = this.profilesList[userInd].ProxyMailFolders.IndexOf(selectedList);
 
             if (((ProxyList)tvMain.SelectedItem).listName == "Корзина")
@@ -490,9 +490,9 @@
             }
 
             ProxyLetter.UncheckAll();
+            this.tvMain.Items.Refresh();
 
-            lbMailBox.ItemsSource = null;
-            lbMailBox.ItemsSource = selectedList.ProxyMailList;
+            return;
         }
 
         private void ItemBorder_PreviewMouseRightButtonDown(object sender, MouseButtonEventArgs e)

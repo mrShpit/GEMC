@@ -450,6 +450,14 @@
                                             <ImageSource>pack://application:,,,/Resources/spam.png</ImageSource>
                                         </Button.Tag>
                                     </Button>
+
+                                    <Button x:Name="btRestore" Template="{StaticResource LittleImageButton}" 
+                                            Click="btDelete_Click" DockPanel.Dock="Right">
+                                        <Button.Tag>
+                                            <ImageSource>pack://application:,,,/Resources/UndoIcon.png</ImageSource>
+                                        </Button.Tag>
+                                    </Button>
+                                    
                                     <Border/>
                                 </DockPanel>
                             </Border>
@@ -618,8 +626,12 @@
                                     CornerRadius="7" Background="{DynamicResource ResourceKey=StyleColor}" >
                                 <DockPanel LastChildFill="true">
 
-                                    <Button Content="Ответ" Template="{StaticResource SimpleButtonTemplate}" DockPanel.Dock="Left" Width="70" Margin ="10,5,5,5" Height="30"/>
-                                    <Button Content="Переслать" Template="{StaticResource SimpleButtonTemplate}" DockPanel.Dock="Left" Width="70" Margin ="10,5,5,5" Height="30"/>
+                                    <Button x:Name="btAnswer" Content="Ответ" 
+                                            Template="{StaticResource SimpleButtonTemplate}" DockPanel.Dock="Left" 
+                                            Width="70" Margin ="10,5,5,5" Height="30"/>
+                                    <Button x:Name="btResend" Content="Переслать" 
+                                            Template="{StaticResource SimpleButtonTemplate}" DockPanel.Dock="Left" 
+                                            Width="70" Margin ="10,5,5,5" Height="30"/>
                                     <Button x:Name="btCloseAllTabs" Content="Закрыть все" 
 									Template="{StaticResource SimpleButtonTemplate}" DockPanel.Dock="Right" 
 									Width="80" Margin ="10,5,5,5" Height="30" Click="btCloseAllTabs_Click" />

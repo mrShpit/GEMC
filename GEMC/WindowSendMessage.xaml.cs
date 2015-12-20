@@ -10,12 +10,14 @@
     {
         private Profile mailSender;
 
-        public WindowSendMessage(Profile prof, Point location, double height, double width)
+        public WindowSendMessage(Profile prof, Point location, double height, double width, string letterText, string recievers)
         {
             this.InitializeComponent();
             this.mailSender = prof;
             this.Left = (width / 2) - (this.Width / 2) + location.X;
             this.Top = (height / 2) - (this.Height / 2) + location.Y;
+            tbMessage.Text = letterText;
+            tbAdress.Text = recievers;
         }
 
         private void btSend_Click(object sender, RoutedEventArgs e)
@@ -24,13 +26,20 @@
 
             if (tbAdress.Text != string.Empty && tbMessage.Text != string.Empty && tbSubject.Text != string.Empty)
             {
-                Letter letter = new Letter(this.mailSender.Id, tbSubject.Text, tbMessage.Text, this.mailSender.Adress, tbAdress.Text, "Outbox", DateTime.Now);
-                letter.SetId();
+                string adressesText = tbAdress.Text.Remove(' ');
+                string[] recievers = adressesText.Split(',');
+                
+                foreach (string reciever in recievers)
+                {
+                    Letter letter = new Letter(this.mailSender.Id, tbSubject.Text, tbMessage.Text, this.mailSender.Adress, tbAdress.Text, "Outbox", DateTime.Now);
+                    letter.SetId();
 
-                PostClient pc = PostClient.instance;
-                pc.SendLetterSMTP(this.mailSender, letter);
+                    PostClient pc = PostClient.instance;
+                    pc.SendLetterSMTP(this.mailSender, letter);
 
-                Letter.AddLetterToDB(this.mailSender, letter);
+                    Letter.AddLetterToDB(this.mailSender, letter);
+                }
+
                 this.Close();
                 main.FillProfilesListFull();
             }
