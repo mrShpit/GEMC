@@ -452,7 +452,7 @@
                                     </Button>
 
                                     <Button x:Name="btRestore" Template="{StaticResource LittleImageButton}" 
-                                            Click="btDelete_Click" DockPanel.Dock="Right">
+                                             DockPanel.Dock="Right" Click="btRestore_Click">
                                         <Button.Tag>
                                             <ImageSource>pack://application:,,,/Resources/UndoIcon.png</ImageSource>
                                         </Button.Tag>
@@ -628,17 +628,17 @@
 
                                     <Button x:Name="btAnswer" Content="Ответ" 
                                             Template="{StaticResource SimpleButtonTemplate}" DockPanel.Dock="Left" 
-                                            Width="70" Margin ="10,5,5,5" Height="30"/>
+                                            Width="70" Margin ="10,5,5,5" Height="30" Click="btAnswer_Click"/>
                                     <Button x:Name="btResend" Content="Переслать" 
                                             Template="{StaticResource SimpleButtonTemplate}" DockPanel.Dock="Left" 
-                                            Width="70" Margin ="10,5,5,5" Height="30"/>
+                                            Width="70" Margin ="10,5,5,5" Height="30" Click="btResend_Click"/>
                                     <Button x:Name="btCloseAllTabs" Content="Закрыть все" 
-									Template="{StaticResource SimpleButtonTemplate}" DockPanel.Dock="Right" 
-									Width="80" Margin ="10,5,5,5" Height="30" Click="btCloseAllTabs_Click" />
+									        Template="{StaticResource SimpleButtonTemplate}" DockPanel.Dock="Right" 
+									        Width="80" Margin ="10,5,5,5" Height="30" Click="btCloseAllTabs_Click" />
                                     <Border/>
                                     <Button x:Name="btCloseTab" Content="Закрыть" 
-									Template="{StaticResource SimpleButtonTemplate}" DockPanel.Dock="Right" 
-									Width="70" Margin ="10,5,5,5" Height="30" Click="btCloseTab_Click"/>
+									        Template="{StaticResource SimpleButtonTemplate}" DockPanel.Dock="Right" 
+									        Width="70" Margin ="10,5,5,5" Height="30" Click="btCloseTab_Click"/>
                                     <Border/>
                                 </DockPanel>
                             </Border>

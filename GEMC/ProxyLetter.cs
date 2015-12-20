@@ -24,7 +24,15 @@
             this.SendTime = sendtime;
         }
 
-        private bool isChecked;
+        public ProxyLetter(string id, string subject, DateTime sendtime, string interlocutor)
+        {
+            this.Id = id;
+            this.Subject = subject;
+            this.SendTime = sendtime;
+            this.Interlocutor = interlocutor;
+        }
+
+        private bool isChecked = false;
 
         public bool IsChecked
         {

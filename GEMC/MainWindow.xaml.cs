@@ -6,10 +6,12 @@
     using System.Windows;
     using System.Windows.Controls;
     using System.Data.SqlClient;
+    using System.Threading;
     using System.Collections.Generic;
     using System.Windows.Input;
     using System.Windows.Media;
     using System.Windows.Media.Animation;
+    using System.Threading.Tasks;
 
     /// <summary>
     /// Логика взаимодействия для MainWindow.xaml
@@ -330,30 +332,46 @@
         {
             if (tvMain.SelectedItem != null)
             {
-                Profile user = new Profile();
-
-                if (tvMain.SelectedItem.GetType().ToString() == "GEMC.Profile")
-                {
-                    user = (Profile)tvMain.SelectedItem;
-                }
-                else
-                {
-                    ProxyList selectedList = (ProxyList)tvMain.SelectedItem;
-                    user = Profile.DB_GetByID(selectedList.masterId);
-                }
-
-                Point location = this.PointToScreen(new Point(0, 0));
-                double height = this.Height;
-                double width = this.Width;
-
-                WindowSendMessage wsm = new WindowSendMessage(user, location, height, width, string.Empty, string.Empty);
-                wsm.Owner = this;
-                wsm.ShowDialog();
+                this.CreateSendingWindow(string.Empty, string.Empty);
             }
             else
             {
                 MessageBox.Show("Выберите профиль для отправки сообщения");
             }
+        }
+
+        private void CreateSendingWindow(string letterText, string adressesText)
+        {
+            Profile user = new Profile();
+
+            if (tvMain.SelectedItem.GetType().ToString() == "GEMC.Profile")
+            {
+                user = (Profile)tvMain.SelectedItem;
+            }
+            else
+            {
+                ProxyList selectedList = (ProxyList)tvMain.SelectedItem;
+                user = Profile.DB_GetByID(selectedList.masterId);
+            }
+
+            Point location = this.PointToScreen(new Point(0, 0));
+            double height = this.Height;
+            double width = this.Width;
+
+            WindowSendMessage wsm = new WindowSendMessage(user, location, height, width, letterText, adressesText);
+            wsm.Owner = this;
+            wsm.ShowDialog();
+        }
+
+        private void CreateSendingWindowChoosingProfile(Profile user, string letterText, string adressesText)
+        {
+            Point location = this.PointToScreen(new Point(0, 0));
+            double height = this.Height;
+            double width = this.Width;
+
+            WindowSendMessage wsm = new WindowSendMessage(user, location, height, width, letterText, adressesText);
+            wsm.Owner = this;
+            wsm.ShowDialog();
         }
 
         private void tabLetterBox_MouseDown(object sender, MouseButtonEventArgs e)
@@ -373,7 +391,7 @@
             }
         }
 
-        private void btGetMail_Click(object sender, RoutedEventArgs e)
+        private async void btGetMail_Click(object sender, RoutedEventArgs e)
         {
             if (tvMain.SelectedItem != null)
             {
@@ -389,19 +407,44 @@
                     user = Profile.DB_GetByID(selectedList.masterId);
                 }
 
-                PostClient pc = PostClient.instance;
-                List<Letter> list = pc.PullFreshLetters(user);
-                foreach (Letter letter in list)
-                {
-                    Letter.AddLetterToDB(user, letter);
-                }
-                
-                this.FillProfilesListFull();
+                await this.PullingMail(user);
             }
             else
             {
                 MessageBox.Show("Сначала выберите профиль");
             }
+        }
+
+        private async Task PullingMail(Profile user)
+        {
+            int userIndex = this.DetectUserIndexInTree(user);
+
+            int inboxIndex = -1;
+            for (int i = 0; i < this.profilesList[userIndex].ProxyMailFolders.Count; i++)
+            {
+                if (this.profilesList[userIndex].ProxyMailFolders[i].listName == "Входящие")
+                {
+                    inboxIndex = i;
+                }
+            }
+
+            await Task.Run(() =>
+                {
+                    PostClient pc = PostClient.instance;
+                    List<Letter> list = pc.PullFreshLetters(user);
+                    foreach (Letter letter in list)
+                    {
+                        Letter.AddLetterToDB(user, letter);
+                        ProxyLetter proxy = new ProxyLetter(letter.Id, letter.Subject, letter.SendingTime, letter.From);
+                        this.profilesList[userIndex].ProxyMailFolders[inboxIndex].ProxyMailList.Add(proxy);
+                    }
+
+                    Dispatcher.BeginInvoke(new Action( () =>
+   		            {
+                        MessageBox.Show("Письма получены и список будет перезагружен");
+                        tvMain.Items.Refresh();
+   		            }));
+                });
         }
 
         private int DetectUserIndexInTree(Profile user)
@@ -425,7 +468,7 @@
             int userInd = this.DetectUserIndexInTree(user);
             int curListInd = this.profilesList[userInd].ProxyMailFolders.IndexOf(selectedList);
 
-            if (this.profilesList[userInd].ProxyMailFolders[curListInd].listName == "Спам")
+            if (this.profilesList[userInd].ProxyMailFolders[curListInd].listName == "Спам" || ProxyLetter.CheckedItems.Count == 0)
             {
                 return;
             }
@@ -454,12 +497,17 @@
 
         private void btDelete_Click(object sender, RoutedEventArgs e)
         {
+            if (ProxyLetter.CheckedItems.Count == 0)
+            {
+                return;
+            }
+
             ProxyList selectedList = (ProxyList)tvMain.SelectedItem;
             Profile user = Profile.DB_GetByID(selectedList.masterId);
             int userInd = this.DetectUserIndexInTree(user);
             int curListInd = this.profilesList[userInd].ProxyMailFolders.IndexOf(selectedList);
 
-            if (((ProxyList)tvMain.SelectedItem).listName == "Корзина")
+            if (selectedList.listName == "Корзина")
             {
                 foreach (ProxyLetter letter in ProxyLetter.CheckedItems)
                 {
@@ -492,6 +540,63 @@
             ProxyLetter.UncheckAll();
             this.tvMain.Items.Refresh();
 
+            return;
+        }
+
+        private void btRestore_Click(object sender, RoutedEventArgs e)
+        {
+            if (ProxyLetter.CheckedItems.Count == 0)
+            {
+                return;
+            }
+
+            ProxyList selectedList = (ProxyList)tvMain.SelectedItem;
+            Profile user = Profile.DB_GetByID(selectedList.masterId);
+            int userInd = this.DetectUserIndexInTree(user);
+            int curListInd = this.profilesList[userInd].ProxyMailFolders.IndexOf(selectedList);
+
+            if (selectedList.listName != "Корзина" && selectedList.listName != "Спам")
+            {
+                return;
+            }
+
+            int inboxIndex = -1;
+            int outboxIndex = -1;
+
+            for (int i = 0; i < this.profilesList[userInd].ProxyMailFolders.Count; i++)
+            {
+                if (this.profilesList[userInd].ProxyMailFolders[i].listName == "Входящие")
+                {
+                    inboxIndex = i;
+                }
+
+                if (this.profilesList[userInd].ProxyMailFolders[i].listName == "Отправленные")
+                {
+                    outboxIndex = i;
+                }
+             }
+
+            foreach (ProxyLetter proxyLetter in ProxyLetter.CheckedItems)
+            {
+                Letter letter = proxyLetter.GetLetter();
+                if (letter.From == user.Adress)
+                {
+                    this.profilesList[userInd].ProxyMailFolders[curListInd].ProxyMailList.Remove(proxyLetter);
+                    this.profilesList[userInd].ProxyMailFolders[outboxIndex].ProxyMailList.Add(proxyLetter);
+
+                    Letter.ChangeLetterFolder(proxyLetter, "Outbox");
+                }
+                else
+                {
+                    this.profilesList[userInd].ProxyMailFolders[curListInd].ProxyMailList.Remove(proxyLetter);
+                    this.profilesList[userInd].ProxyMailFolders[inboxIndex].ProxyMailList.Add(proxyLetter);
+
+                    Letter.ChangeLetterFolder(proxyLetter, "Inbox");
+                }
+            }
+
+            ProxyLetter.UncheckAll();
+            this.tvMain.Items.Refresh();
             return;
         }
 
@@ -582,6 +687,27 @@
             {
                 MessageBox.Show("Выберите почтовый ящик");
             }
+        }
+
+        private void btAnswer_Click(object sender, RoutedEventArgs e)
+        {
+            Letter currentLetter  = ((Letter)tabLetterBox.SelectedItem);
+            string senderAdress = currentLetter.From;
+            Profile user = Profile.DB_GetByID(currentLetter.ProfileId);
+            
+            if (user.Adress == currentLetter.From)
+            {
+                return;
+            }
+
+            this.CreateSendingWindowChoosingProfile(user, string.Empty, senderAdress);
+        }
+
+        private void btResend_Click(object sender, RoutedEventArgs e)
+        {
+            string letterText = ((Letter)tabLetterBox.SelectedItem).Body;
+            Profile user = Profile.DB_GetByID(((Letter)tabLetterBox.SelectedItem).ProfileId);
+            this.CreateSendingWindowChoosingProfile(user, letterText, string.Empty);
         }
     }
 }
