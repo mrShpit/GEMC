@@ -52,6 +52,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
@@ -78,6 +79,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="AttachmentExtended.cs" />
     <Compile Include="Expression.cs" />
     <Compile Include="FillRecieved.cs" />
     <Compile Include="FillSended.cs" />
@@ -187,6 +189,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       <DependentUpon>EMCdataBase.mdf</DependentUpon>
     </Content>
+    <Resource Include="Resources\fileIcon.png" />
     <Resource Include="Resources\undoIcon.png" />
     <Resource Include="Resources\trash.png" />
     <Resource Include="Resources\spam.png" />

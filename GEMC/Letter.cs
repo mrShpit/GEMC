@@ -110,7 +110,6 @@
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = _connection;
             _connection.Open();
-            StringBuilder sb = new StringBuilder();
             cmd.CommandText = "insert into Mail (Id, ProfileId, Subject,Body, AdressFrom, AdressTo, Category, Time)"
             + " values (@id, @pid, @s, @b, @af, @at, @c, @t)";
             letter.SetId();
@@ -132,20 +131,18 @@
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = _connection;
             _connection.Open();
-            StringBuilder sb = new StringBuilder();
             cmd.CommandText = "Update Mail SET Category = '" + folderName + "' where Id = '" + letter.Id + "'";
             cmd.ExecuteNonQuery();
             _connection.Close();
         }
 
-        public static void DeleteLetterFromDB(Letter letter)
+        public static void DeleteLetterFromDB(string letterId)
         {
             SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True;");
             SqlCommand cmd = new SqlCommand();
             cmd.Connection = _connection;
             _connection.Open();
-            StringBuilder sb = new StringBuilder();
-            cmd.CommandText = "Delete from Mail where Id='" + letter.Id + "'";
+            cmd.CommandText = "delete from Mail where Id='" + letterId + "'";
             cmd.ExecuteNonQuery();
             _connection.Close();
             MessageBox.Show("Deleted");

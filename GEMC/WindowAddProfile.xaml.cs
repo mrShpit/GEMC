@@ -45,8 +45,8 @@
                 newUser.SetId();
                 newUser.LastTimeChecked = DateTime.Now;
                 Profile.DB_Add(newUser);
-                main.FillProfilesListFull();
-
+                main.profilesList.Add(newUser);
+                main.tvMain.Items.Refresh();
                 this.Close();
             }
         }

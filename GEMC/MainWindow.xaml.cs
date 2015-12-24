@@ -28,7 +28,6 @@
 
         public void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            this.Start();
             System.Windows.Threading.DispatcherTimer dispatcherTimer = new System.Windows.Threading.DispatcherTimer();
             this.Opacity = 0.00;
             dispatcherTimer.Tick += new EventHandler((sender1, e1) =>
@@ -41,6 +40,7 @@
             dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 20);
             dispatcherTimer.Start();
             SearchBox.SelectedIndex = 2;
+            this.Start();
             this.DataContext = this.MainPostWindow;
         }
 
@@ -78,6 +78,7 @@
             }
 
             this.profilesList.Sort((x, y) => x.Name.CompareTo(y.Name));
+            tvMain.Items.Refresh();
         }
 
         private void DecodeFrom64(string input)
@@ -437,6 +438,7 @@
                         Letter.AddLetterToDB(user, letter);
                         ProxyLetter proxy = new ProxyLetter(letter.Id, letter.Subject, letter.SendingTime, letter.From);
                         this.profilesList[userIndex].ProxyMailFolders[inboxIndex].ProxyMailList.Add(proxy);
+                        this.profilesList[userIndex].LastTimeChecked = DateTime.Now;
                     }
 
                     Dispatcher.BeginInvoke(new Action( () =>
@@ -459,6 +461,14 @@
             }
 
             return userInd;
+        }
+
+        private void CleanProxyCheckList()
+        {
+            for (int i = 0; i < ProxyLetter.CheckedItems.Count; i++)
+            {
+                ProxyLetter.CheckedItems[i].IsChecked = false;
+            }
         }
 
         private void btSpam_Click(object sender, RoutedEventArgs e)
@@ -489,7 +499,7 @@
                 Letter.ChangeLetterFolder(letter, "Spam");
             }
 
-            ProxyLetter.UncheckAll();
+            this.CleanProxyCheckList();
             this.tvMain.Items.Refresh();
 
             return;
@@ -513,7 +523,7 @@
                 {
                     this.profilesList[userInd].ProxyMailFolders[curListInd].ProxyMailList.Remove(letter);
 
-                    Letter.DeleteLetterFromDB(letter.GetLetter());
+                    Letter.DeleteLetterFromDB(letter.Id);
                 }
             }
             else
@@ -537,7 +547,7 @@
                 }
             }
 
-            ProxyLetter.UncheckAll();
+            this.CleanProxyCheckList();
             this.tvMain.Items.Refresh();
 
             return;
@@ -595,7 +605,7 @@
                 }
             }
 
-            ProxyLetter.UncheckAll();
+            this.CleanProxyCheckList();
             this.tvMain.Items.Refresh();
             return;
         }
@@ -637,7 +647,8 @@
                 {
                     Profile user = (Profile)tvMain.SelectedItem;
                     Profile.DB_Delete(user);
-                    this.FillProfilesListFull();
+                    this.profilesList.Remove(user);
+                    this.tvMain.Items.Refresh();
                 }
             }
         }
@@ -708,6 +719,22 @@
             string letterText = ((Letter)tabLetterBox.SelectedItem).Body;
             Profile user = Profile.DB_GetByID(((Letter)tabLetterBox.SelectedItem).ProfileId);
             this.CreateSendingWindowChoosingProfile(user, letterText, string.Empty);
+        }
+
+        private void checkBoxAbs_Checked(object sender, RoutedEventArgs e)
+        {
+            for (int i = 0; i < lbMailBox.Items.Count; i++)
+            {
+                ((ProxyLetter)lbMailBox.Items[i]).IsChecked = true;
+            }
+        }
+
+        private void checkBoxAbs_Unchecked(object sender, RoutedEventArgs e)
+        {
+            for (int i = 0; i < lbMailBox.Items.Count; i++)
+            {
+                ((ProxyLetter)lbMailBox.Items[i]).IsChecked = false;
+            }
         }
     }
 }

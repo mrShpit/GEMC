@@ -7,7 +7,7 @@
     using System.Threading.Tasks;
 
     public class DefaultDBClass
-    {
+    {   
             private string p_Id;
 
             public string Id

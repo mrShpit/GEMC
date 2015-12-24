@@ -139,7 +139,7 @@
             return profileList;
         }
 
-        public static void DB_Update(Profile user)
+        public static void DB_UpdateTime(Profile user)
         {
             SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True;");
             SqlCommand cmd = new SqlCommand();

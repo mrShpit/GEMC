@@ -137,22 +137,6 @@
             return str.Replace("\0", string.Empty);
         }
 
-        public void SendLetterSMTP(Profile sender, Letter letter)
-        {
-            // SmtpClient Smtp = new SmtpClient("smtp.mail.ru", 25);
-            // SmtpClient Smtp = new SmtpClient("smtp.yandex.ru", 25);
-            // SmtpClient Smtp = new SmtpClient("smtp.gmail.com", 587);
-            SmtpClient smtp = new SmtpClient("smtp." + sender.Server, sender.SmtpPort); // Сервер и порт
-            smtp.Credentials = new System.Net.NetworkCredential(sender.Adress, sender.Password);  // Логин и пароль
-            MailMessage message = new MailMessage();
-            message.From = new MailAddress(sender.Adress);
-            message.To.Add(new MailAddress(letter.To));
-            message.Subject = letter.Subject;
-            message.Body = letter.Body;
-            smtp.EnableSsl = true;
-            smtp.Send(message);
-        }
-
         public int GetTotalLetterNum(Profile user)
         {
             int result = 0;
@@ -179,26 +163,29 @@
             List<Letter> newLettersList = new List<Letter>();
 
             DateTime start = DateTime.Now;
-            TimeSpan time;
 
             int totalLetterNumber = this.GetTotalLetterNum(user);
 
             for (int i = totalLetterNumber; i > 0; i--)
             {
-                Letter newLetter = this.CheckLetterByIMAP(user, i);
-                if (newLetter.SendingTime > user.LastTimeChecked)
+                try
                 {
-                    newLettersList.Add(newLetter);
+                    Letter newLetter = this.CheckLetterByIMAP(user, i);
+
+                    // if (newLetter.SendingTime > user.LastTimeChecked)
+                    if (newLetter.SendingTime > new DateTime(2015, 10, 10))
+                    {
+                        newLettersList.Add(newLetter);
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
-                else
-                {
-                    break;
+                catch 
+                { 
                 }
             }
-
-            time = DateTime.Now - start;
-
-            TimeSpan test = time;
 
             // user.LastTimeChecked = DateTime.Now;
             // Profile.DB_Update(user);
