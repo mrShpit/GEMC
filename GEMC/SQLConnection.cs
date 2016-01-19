@@ -14,7 +14,7 @@
         public string DetectLocalDB()
         {
             //Detecting
-            connectionLine = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=D:\GEMC2\GEMC\EMCdataBase.mdf;Integrated Security=True;";
+            connectionLine = @"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True;";
             return connectionLine;
         }
 
