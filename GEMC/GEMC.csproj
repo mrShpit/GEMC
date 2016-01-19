@@ -81,8 +81,6 @@
     </ApplicationDefinition>
     <Compile Include="AttachmentExtended.cs" />
     <Compile Include="Expression.cs" />
-    <Compile Include="FillRecieved.cs" />
-    <Compile Include="FillSended.cs" />
     <Compile Include="BuildStrategy.cs" />
     <Compile Include="ImapAuthenticate.cs" />
     <Compile Include="ImapCommand.cs" />
@@ -97,6 +95,7 @@
     <Compile Include="ProxyLetter.cs" />
     <Compile Include="ProxyList.cs" />
     <Compile Include="ServerProtocol.cs" />
+    <Compile Include="SQLConnection.cs" />
     <Compile Include="TestWindow.xaml.cs">
       <DependentUpon>TestWindow.xaml</DependentUpon>
     </Compile>

@@ -5,15 +5,15 @@
     using System.Data.SqlClient;
     using System.Collections.Generic;
 
-    public class ProxyLetter
+    public class ProxyLetter : INotifyPropertyChanged
     {
         public static List<ProxyLetter> CheckedItems = new List<ProxyLetter>();
 
         public static void UncheckAll()
         {
-            for (int i = 0; i < CheckedItems.Count; i++)
+            while (CheckedItems.Count != 0)
             {
-                CheckedItems[i].IsChecked = false;
+                CheckedItems[0].IsChecked = false;
             }
         }
 
@@ -44,6 +44,7 @@
             set
             {
                 this.isChecked = value;
+                this.NotifyPropertyChanged("isChecked");
                 if (this.isChecked == true)
                 {
                     ProxyLetter.CheckedItems.Add(this);
@@ -52,6 +53,16 @@
                 {
                     ProxyLetter.CheckedItems.Remove(this);
                 }
+            }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public void NotifyPropertyChanged(string propName)
+        {
+            if (this.PropertyChanged != null)
+            {
+                this.PropertyChanged(this, new PropertyChangedEventArgs(propName));
             }
         }
 
@@ -132,17 +143,12 @@
         {
             Letter letter = new Letter();
 
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True;");
-
-            SqlCommand cmd = new SqlCommand();
-            SqlDataReader dr;
-
-            cmd.Connection = _connection;
-            _connection.Open();
+            LocalSQLConnection sqlconnectionClass = new LocalSQLConnection();
+            SqlCommand cmd = sqlconnectionClass.DeployConnectionAndCommand();
 
             cmd.CommandText = "select * from Mail where Id='" + this.Id + "'";
 
-            dr = cmd.ExecuteReader();
+            SqlDataReader dr = cmd.ExecuteReader();
             if (dr.HasRows)
             {
                 while (dr.Read())
@@ -151,7 +157,7 @@
                 }
             }
 
-            _connection.Close();
+            sqlconnectionClass.CloseConnection();
 
             return letter;
         }

@@ -70,6 +70,38 @@
             }
         }
 
+        public string FromDisplay
+        {
+            get
+            {
+                return "От: " + this.From;
+            }
+        }
+
+        public string ToDisplay
+        {
+            get
+            {
+                return "Кому: " + this.To;
+            }
+        }
+
+        public string WhenDisplay
+        {
+            get
+            {
+                return "Время отправки: " + this.SendingTime;
+            }
+        }
+
+        public string SubjectDisplay
+        {
+            get
+            {
+                return "Тема: " + this.Subject;
+            }
+        }
+
         private DateTime _sendingTime;
 
         public DateTime SendingTime
@@ -106,10 +138,9 @@
 
         public static void AddLetterToDB(Profile user, Letter letter)
         {
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True;");
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = _connection;
-            _connection.Open();
+            LocalSQLConnection sqlconnectionClass = new LocalSQLConnection();
+            SqlCommand cmd = sqlconnectionClass.DeployConnectionAndCommand();
+
             cmd.CommandText = "insert into Mail (Id, ProfileId, Subject,Body, AdressFrom, AdressTo, Category, Time)"
             + " values (@id, @pid, @s, @b, @af, @at, @c, @t)";
             letter.SetId();
@@ -122,29 +153,30 @@
             cmd.Parameters.AddWithValue("@c", letter.Category);
             cmd.Parameters.AddWithValue("@t", letter.SendingTime);
             cmd.ExecuteNonQuery();
-            _connection.Close();
+
+            sqlconnectionClass.CloseConnection();
         }
 
-        public static void ChangeLetterFolder(ProxyLetter letter, string folderName)
+        public static void ChangeLetterFolderInDB(ProxyLetter letter, string folderName)
         {
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True;");
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = _connection;
-            _connection.Open();
+            LocalSQLConnection sqlconnectionClass = new LocalSQLConnection();
+            SqlCommand cmd = sqlconnectionClass.DeployConnectionAndCommand();
+
             cmd.CommandText = "Update Mail SET Category = '" + folderName + "' where Id = '" + letter.Id + "'";
             cmd.ExecuteNonQuery();
-            _connection.Close();
+
+            sqlconnectionClass.CloseConnection();
         }
 
         public static void DeleteLetterFromDB(string letterId)
         {
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True;");
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = _connection;
-            _connection.Open();
+            LocalSQLConnection sqlconnectionClass = new LocalSQLConnection();
+            SqlCommand cmd = sqlconnectionClass.DeployConnectionAndCommand();
+
             cmd.CommandText = "delete from Mail where Id='" + letterId + "'";
             cmd.ExecuteNonQuery();
-            _connection.Close();
+
+            sqlconnectionClass.CloseConnection();
             MessageBox.Show("Deleted");
         }
     }

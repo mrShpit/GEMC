@@ -6,31 +6,28 @@
     using System.Linq;
     using System.Text;
     using System.Threading.Tasks;
+    using System.ComponentModel;
+    using System.Collections.ObjectModel;
 
     public class ProxyList
     {
         public ProxyList(string name, string id)
         {
             this.listName = name;
-            this.ProxyMailList = new List<ProxyLetter>();
-            this.masterId = id;
+            this.ProxyMailList = new ObservableCollection<ProxyLetter>();
+            this.ProfileId = id;
         }
 
         public static ProxyList GetRecieved(Profile user)
         {
             ProxyList proxies = new ProxyList("Входящие", user.Id);
 
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True;");
-
-            SqlCommand cmd = new SqlCommand();
-            SqlDataReader dr;
-
-            cmd.Connection = _connection;
-            _connection.Open();
+            LocalSQLConnection sqlconnectionClass = new LocalSQLConnection();
+            SqlCommand cmd = sqlconnectionClass.DeployConnectionAndCommand();
 
             cmd.CommandText = "select * from Mail where ProfileId='" + user.Id + "' and Category='Inbox'";
 
-            dr = cmd.ExecuteReader();
+            SqlDataReader dr = cmd.ExecuteReader();
             if (dr.HasRows)
             {
                 while (dr.Read())
@@ -41,7 +38,7 @@
                 }
             }
 
-            _connection.Close();
+            sqlconnectionClass.CloseConnection();
             return proxies;
         }
 
@@ -49,17 +46,12 @@
         {
             ProxyList proxies = new ProxyList("Отправленные", user.Id);
 
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True;");
-
-            SqlCommand cmd = new SqlCommand();
-            SqlDataReader dr;
-
-            cmd.Connection = _connection;
-            _connection.Open();
+            LocalSQLConnection sqlconnectionClass = new LocalSQLConnection();
+            SqlCommand cmd = sqlconnectionClass.DeployConnectionAndCommand();
 
             cmd.CommandText = "select * from Mail where ProfileId='" + user.Id + "' and Category='Outbox'";
 
-            dr = cmd.ExecuteReader();
+            SqlDataReader dr = cmd.ExecuteReader();
             if (dr.HasRows)
             {
                 while (dr.Read())
@@ -70,7 +62,7 @@
                 }
             }
 
-            _connection.Close();
+            sqlconnectionClass.CloseConnection();
             return proxies;
         }
 
@@ -78,17 +70,12 @@
         {
             ProxyList proxies = new ProxyList("Корзина", user.Id);
 
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True;");
-
-            SqlCommand cmd = new SqlCommand();
-            SqlDataReader dr;
-
-            cmd.Connection = _connection;
-            _connection.Open();
+            LocalSQLConnection sqlconnectionClass = new LocalSQLConnection();
+            SqlCommand cmd = sqlconnectionClass.DeployConnectionAndCommand();
 
             cmd.CommandText = "select * from Mail where ProfileId='" + user.Id + "' and Category='Trash'";
 
-            dr = cmd.ExecuteReader();
+            SqlDataReader dr = cmd.ExecuteReader();
             if (dr.HasRows)
             {
                 while (dr.Read())
@@ -99,7 +86,8 @@
                 }
             }
 
-            _connection.Close();
+            sqlconnectionClass.CloseConnection();
+
             return proxies;
         }
 
@@ -107,17 +95,12 @@
         {
             ProxyList proxies = new ProxyList("Спам", user.Id);
 
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True;");
-
-            SqlCommand cmd = new SqlCommand();
-            SqlDataReader dr;
-
-            cmd.Connection = _connection;
-            _connection.Open();
+            LocalSQLConnection sqlconnectionClass = new LocalSQLConnection();
+            SqlCommand cmd = sqlconnectionClass.DeployConnectionAndCommand();
 
             cmd.CommandText = "select * from Mail where ProfileId='" + user.Id + "' and Category='Spam'";
 
-            dr = cmd.ExecuteReader();
+            SqlDataReader dr = cmd.ExecuteReader();
             if (dr.HasRows)
             {
                 while (dr.Read())
@@ -128,11 +111,11 @@
                 }
             }
 
-            _connection.Close();
+            sqlconnectionClass.CloseConnection();
             return proxies;
         }
 
-        public List<ProxyLetter> ProxyMailList
+        public ObservableCollection<ProxyLetter> ProxyMailList
             {
                 get { return this._list; }
                 set { this._list = value; }
@@ -141,10 +124,9 @@
         public int listItemsCount
         {
             get { return this._list.Count; }
-            set { this.listItemsCount = value; }
         }
 
-        public string masterId
+        public string ProfileId
         {
             get { return this._masterId; }
             set { this._masterId = value; }
@@ -155,23 +137,11 @@
             get { return this._listname; }
             set { this._listname = value; }
         }
-        
-        // Нижняя часть не пашет. Я починю ее когда овладею черной магией.
-        // private BuildListStrategy _buildstrategy;
-        public void SetFillStrategy(BuildListStrategy buildstrategy)
-        {
-            // this._buildstrategy = buildstrategy;
-        }
-
-        public void Fill(Profile user)
-        {
-            // this._buildstrategy.Fill(this._list, user);
-        }
 
         private string _listname;
 
         private string _masterId;
 
-        private List<ProxyLetter> _list = new List<ProxyLetter>();
+        private ObservableCollection<ProxyLetter> _list = new ObservableCollection<ProxyLetter>();
     }
 }

@@ -85,11 +85,9 @@
 
         public static void DB_Add(Profile user)
         {
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=
-                                                                C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True");
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = _connection;
-            _connection.Open();
+            LocalSQLConnection sqlconnectionClass = new LocalSQLConnection();
+            SqlCommand cmd = sqlconnectionClass.DeployConnectionAndCommand();
+
             cmd.CommandText = "insert into Profiles (Id, Name, Adress,Password, LastTimeChecked, Server, SmtpPort, PopPort)"
             + " values (@id, @name, @adr, @pas, @ltc, @s, @smtp, @pop)";
             cmd.Parameters.AddWithValue("@id", user.Id);
@@ -101,21 +99,20 @@
             cmd.Parameters.AddWithValue("@smtp", user.SmtpPort);
             cmd.Parameters.AddWithValue("@pop", user.PopPort);
             cmd.ExecuteNonQuery();
-            _connection.Close();
+
+            sqlconnectionClass.CloseConnection();
         }
 
         public static List<Profile> DB_Load()
         {
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True");
-            SqlCommand cmd = new SqlCommand();
-            SqlDataReader dr;
+            LocalSQLConnection sqlconnectionClass = new LocalSQLConnection();
+            SqlCommand cmd = sqlconnectionClass.DeployConnectionAndCommand();
+
             List<Profile> profileList = new List<Profile>();
-            cmd.Connection = _connection;
-            _connection.Open();
 
             cmd.CommandText = "select * from Profiles";
 
-            dr = cmd.ExecuteReader();
+            SqlDataReader dr = cmd.ExecuteReader();
             if (dr.HasRows)
             {
                 while (dr.Read())
@@ -134,50 +131,48 @@
                 }
             }
 
-            _connection.Close();
+            sqlconnectionClass.CloseConnection();
 
             return profileList;
         }
 
         public static void DB_UpdateTime(Profile user)
         {
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True;");
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = _connection;
-            _connection.Open();
+            LocalSQLConnection sqlconnectionClass = new LocalSQLConnection();
+            SqlCommand cmd = sqlconnectionClass.DeployConnectionAndCommand();
 
             cmd.CommandText = @"Update Profiles SET LastTimeChecked = (@UE) where Id='" + user.Id + "'";
             cmd.Parameters.AddWithValue("@UE", user.LastTimeChecked);
             cmd.ExecuteNonQuery();
-            _connection.Close();
+
+            sqlconnectionClass.CloseConnection();
         }
 
         public static void DB_Delete(Profile user)
         {
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True;");
-            SqlCommand cmd = new SqlCommand();
-            cmd.Connection = _connection;
-            _connection.Open();
+            LocalSQLConnection sqlconnectionClass = new LocalSQLConnection();
+            SqlCommand cmd = sqlconnectionClass.DeployConnectionAndCommand();
+
             cmd.CommandText = @"delete from Profiles where Id='" + user.Id + "'";
             cmd.ExecuteNonQuery();
             cmd.CommandText = @"delete from Mail where ProfileId='" + user.Id + "'";
             cmd.ExecuteNonQuery();
-            _connection.Close();
+
+            sqlconnectionClass.CloseConnection();
         }
 
         public static Profile DB_GetByID(string id)
         {
             Profile prof = new Profile();
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\MSSQLLocalDB;AttachDbFilename=C:\Users\Gleb\Desktop\GEMC\GEMC\EMCdataBase.mdf;Integrated Security=True");
-            SqlCommand cmd = new SqlCommand();
-            SqlDataReader dr;
-            List<Profile> profileList = new List<Profile>();
-            cmd.Connection = _connection;
-            _connection.Open();
+
+            LocalSQLConnection sqlconnectionClass = new LocalSQLConnection();
+            SqlCommand cmd = sqlconnectionClass.DeployConnectionAndCommand();
 
             cmd.CommandText = "select * from Profiles where Id='" + id + "'";
+            SqlDataReader dr = cmd.ExecuteReader();
 
-            dr = cmd.ExecuteReader();
+            sqlconnectionClass.CloseConnection();
+
             if (dr.HasRows)
             {
                 while (dr.Read())

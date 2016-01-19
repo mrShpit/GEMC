@@ -319,6 +319,7 @@
                     </Grid.ColumnDefinitions>
 
                     <Grid Grid.Column="0">
+                        
                         <TreeView Name="tvMain" ItemsSource="{Binding ProfList}" Margin="10"
                                    ScrollViewer.CanContentScroll="False" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                                   BorderThickness="0" SelectedItemChanged="tvMain_SelectedItemChanged"
@@ -522,7 +523,7 @@
 
                                                     <DockPanel Margin="5,0,0,0">
                                                         <CheckBox x:Name="checkBox" DockPanel.Dock="Left" 
-                                                        IsChecked="{Binding IsChecked, Mode=TwoWay}" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                                                        IsChecked="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" VerticalAlignment="Center" Margin="0,0,5,0"/>
 
                                                         <TextBlock FontSize="14" DockPanel.Dock="Left" Width="200" Margin="0,0,5,0"
 														FontWeight="Bold" Text="{Binding Interlocutor, Mode=TwoWay}" 
@@ -577,16 +578,23 @@
 
                         <TabControl Grid.Row="2" x:Name ="tabLetterBox" Margin="8,6,15,6"
                                 BorderThickness="2" Background="White" Opacity="0"
-                                    BorderBrush="{DynamicResource ResourceKey=StyleColor}" MouseDown="tabLetterBox_MouseDown"  >
+                                    BorderBrush="{DynamicResource ResourceKey=StyleColor}" MouseDown="tabLetterBox_MouseDown">
                             <TabControl.ContentTemplate>
                                 <DataTemplate>
                                     <ScrollViewer VerticalScrollBarVisibility="Auto">
                                         
                                         <Grid>
-                                            <ContentControl >
-                                                <TextBlock Text="{Binding Body}" TextWrapping="Wrap"/>
-                                            </ContentControl>
+                                            <ContentControl>
+                                                <StackPanel HorizontalAlignment="Left">
+                                                    <TextBlock  Text="{Binding SubjectDisplay}" FontWeight="Bold" FontSize="15"/>
+                                                    <TextBlock  Text="{Binding FromDisplay}" FontWeight="Bold" FontSize="13"/>
+                                                    <TextBlock  Text="{Binding ToDisplay}" FontWeight="Bold" FontSize="13"/>
+                                                    <TextBlock  Text="{Binding WhenDisplay}" FontWeight="Bold" FontSize="13"/>
+                                                    <TextBlock/>                              
 
+                                                    <TextBlock Text="{Binding Body}" TextWrapping="Wrap"/>
+                                                </StackPanel>
+                                            </ContentControl>
                                         </Grid>
                                     </ScrollViewer>
                                 </DataTemplate>
@@ -616,7 +624,12 @@
 														CornerRadius="7,7,7,0"
 														HorizontalAlignment="Stretch">
 
-                                                                <TextBlock Text="{Binding SubjectPreview}" Margin="4">
+                                                                <TextBlock Text="{Binding SubjectPreview}" FontWeight="Bold" Margin="4">
+                                                                    <TextBlock.ToolTip>
+                                                                        <ToolTip>
+                                                                            <TextBlock Margin="3" Text="{Binding Subject}"/>
+                                                                        </ToolTip>
+                                                                    </TextBlock.ToolTip>
                                                                 </TextBlock>
 
                                                             </Border>

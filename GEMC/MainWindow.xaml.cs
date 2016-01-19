@@ -40,15 +40,15 @@
             dispatcherTimer.Interval = new TimeSpan(0, 0, 0, 0, 20);
             dispatcherTimer.Start();
             SearchBox.SelectedIndex = 2;
-            this.Start();
+            this.LoadingResources();
             this.DataContext = this.MainPostWindow;
         }
 
-        public void Start()
+        public void LoadingResources()
         {
-            SqlConnection _connection = new SqlConnection(@"Data Source=(LocalDB)\v11.0;AttachDbFilename=
-                C:\Users\Gleb\Desktop\GEMC\GEMC\MailClientDataBase.mdf;Integrated Security=True;");
-            _connection.Close();
+            LocalSQLConnection sqlconnectionClass = new LocalSQLConnection();
+            sqlconnectionClass.DetectLocalDB();
+            sqlconnectionClass.CloseConnection();
 
             this.FillProfilesListFull();
         }
@@ -352,7 +352,7 @@
             else
             {
                 ProxyList selectedList = (ProxyList)tvMain.SelectedItem;
-                user = Profile.DB_GetByID(selectedList.masterId);
+                user = Profile.DB_GetByID(selectedList.ProfileId);
             }
 
             Point location = this.PointToScreen(new Point(0, 0));
@@ -405,7 +405,7 @@
                 else
                 {
                     ProxyList selectedList = (ProxyList)tvMain.SelectedItem;
-                    user = Profile.DB_GetByID(selectedList.masterId);
+                    user = Profile.DB_GetByID(selectedList.ProfileId);
                 }
 
                 await this.PullingMail(user);
@@ -463,18 +463,10 @@
             return userInd;
         }
 
-        private void CleanProxyCheckList()
-        {
-            for (int i = 0; i < ProxyLetter.CheckedItems.Count; i++)
-            {
-                ProxyLetter.CheckedItems[i].IsChecked = false;
-            }
-        }
-
         private void btSpam_Click(object sender, RoutedEventArgs e)
         {
             ProxyList selectedList = (ProxyList)tvMain.SelectedItem;
-            Profile user = Profile.DB_GetByID(selectedList.masterId);
+            Profile user = Profile.DB_GetByID(selectedList.ProfileId);
             int userInd = this.DetectUserIndexInTree(user);
             int curListInd = this.profilesList[userInd].ProxyMailFolders.IndexOf(selectedList);
 
@@ -496,10 +488,10 @@
             {
                 this.profilesList[userInd].ProxyMailFolders[curListInd].ProxyMailList.Remove(letter);
                 this.profilesList[userInd].ProxyMailFolders[spamInd].ProxyMailList.Add(letter);
-                Letter.ChangeLetterFolder(letter, "Spam");
+                Letter.ChangeLetterFolderInDB(letter, "Spam");
             }
 
-            this.CleanProxyCheckList();
+            ProxyLetter.UncheckAll();
             this.tvMain.Items.Refresh();
 
             return;
@@ -513,7 +505,7 @@
             }
 
             ProxyList selectedList = (ProxyList)tvMain.SelectedItem;
-            Profile user = Profile.DB_GetByID(selectedList.masterId);
+            Profile user = Profile.DB_GetByID(selectedList.ProfileId);
             int userInd = this.DetectUserIndexInTree(user);
             int curListInd = this.profilesList[userInd].ProxyMailFolders.IndexOf(selectedList);
 
@@ -543,11 +535,11 @@
                     this.profilesList[userInd].ProxyMailFolders[curListInd].ProxyMailList.Remove(letter);
                     this.profilesList[userInd].ProxyMailFolders[trashInd].ProxyMailList.Add(letter);
 
-                    Letter.ChangeLetterFolder(letter, "Trash");
+                    Letter.ChangeLetterFolderInDB(letter, "Trash");
                 }
             }
 
-            this.CleanProxyCheckList();
+            ProxyLetter.UncheckAll();
             this.tvMain.Items.Refresh();
 
             return;
@@ -561,7 +553,7 @@
             }
 
             ProxyList selectedList = (ProxyList)tvMain.SelectedItem;
-            Profile user = Profile.DB_GetByID(selectedList.masterId);
+            Profile user = Profile.DB_GetByID(selectedList.ProfileId);
             int userInd = this.DetectUserIndexInTree(user);
             int curListInd = this.profilesList[userInd].ProxyMailFolders.IndexOf(selectedList);
 
@@ -594,18 +586,18 @@
                     this.profilesList[userInd].ProxyMailFolders[curListInd].ProxyMailList.Remove(proxyLetter);
                     this.profilesList[userInd].ProxyMailFolders[outboxIndex].ProxyMailList.Add(proxyLetter);
 
-                    Letter.ChangeLetterFolder(proxyLetter, "Outbox");
+                    Letter.ChangeLetterFolderInDB(proxyLetter, "Outbox");
                 }
                 else
                 {
                     this.profilesList[userInd].ProxyMailFolders[curListInd].ProxyMailList.Remove(proxyLetter);
                     this.profilesList[userInd].ProxyMailFolders[inboxIndex].ProxyMailList.Add(proxyLetter);
 
-                    Letter.ChangeLetterFolder(proxyLetter, "Inbox");
+                    Letter.ChangeLetterFolderInDB(proxyLetter, "Inbox");
                 }
             }
 
-            this.CleanProxyCheckList();
+            ProxyLetter.UncheckAll();
             this.tvMain.Items.Refresh();
             return;
         }
@@ -731,10 +723,7 @@
 
         private void checkBoxAbs_Unchecked(object sender, RoutedEventArgs e)
         {
-            for (int i = 0; i < lbMailBox.Items.Count; i++)
-            {
-                ((ProxyLetter)lbMailBox.Items[i]).IsChecked = false;
-            }
+            ProxyLetter.UncheckAll();
         }
     }
 }
